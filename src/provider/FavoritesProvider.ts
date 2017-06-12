@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as os from 'os';
 
 import { FileStat } from '../enum';
 import { Item } from '../model';
@@ -95,10 +96,14 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
             if (i.stat === FileStat.DIRECTORY) {
                 return new Resource(path.basename(i.filePath), vscode.TreeItemCollapsibleState.Collapsed, i.filePath, contextValue);
             }
+            let uri = vscode.Uri.parse(`file://${path.resolve(this.workspaceRoot, i.filePath)}`);
+            if (os.platform().startsWith('win')) {
+                uri = vscode.Uri.parse(`file:///${path.resolve(this.workspaceRoot, i.filePath)}`.replace(/\\/g, '/'))
+            }
             return new Resource(path.basename(i.filePath), vscode.TreeItemCollapsibleState.None, i.filePath, contextValue, {
                 command: 'vscode.open',
                 title: '',
-                arguments: [vscode.Uri.parse(`file://${path.resolve(this.workspaceRoot, i.filePath)}`)],
+                arguments: [uri],
             });
         });
     }
