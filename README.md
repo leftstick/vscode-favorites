@@ -7,7 +7,7 @@
 
 An extension helps developer marking resources as favorite. Therefor, those resources can be easily found.
 
-![](https://raw.githubusercontent.com/leftstick/vscode-favorites/master/images/gitk.gif)
+![](https://raw.githubusercontent.com/leftstick/vscode-favorites/master/images/preview.gif)
 
 ## Install
 
@@ -19,9 +19,7 @@ ext install favorites
 
 ## Usage
 
-I assume you have [git](https://git-scm.com/) installed.
-
-`vscode-favorites` will `log` your selected document, and display log information into a separate view
+`vscode-favorites` save your favorite resource in workspace `settings.json`, and show them in a separate view
 
 ### Configuration
 
@@ -30,6 +28,8 @@ I assume you have [git](https://git-scm.com/) installed.
     "favorites.resources": [] //resources path you prefer to mark
 }
 ```
+
+>You don't need handle this config manually, but with context menu instead.
 
 ## LICENSE ##
 

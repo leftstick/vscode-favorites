@@ -13,7 +13,7 @@
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "categories": [
-    "Debuggers"
+    "Other"
   ],
   "icon": "images/favorites.png",
   "bugs": {
@@ -26,34 +26,53 @@
     "url": "https://github.com/leftstick/vscode-favorites.git"
   },
   "activationEvents": [
-    "*"
+    "onCommand:favorites.addToFavorites",
+    "onView:favorites"
   ],
   "license": "GPL-3.0",
   "main": "./out/src",
   "contributes": {
     "configuration": {
-        "type": "object",
-        "title": "Favorites configuration",
-        "properties": {
-            "favorites.resources": {
-                "type": "array",
-                "default": [],
-                "description": "Resources marked as favorite"
-            }
+      "type": "object",
+      "title": "Favorites configuration",
+      "properties": {
+        "favorites.resources": {
+          "type": "array",
+          "default": [],
+          "description": "Resources marked as favorite"
         }
+      }
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "favorites",
+          "name": "Favorites"
+        }
+      ]
     },
     "menus": {
       "explorer/context": [
         {
-          "command": "extension.addToFavorites",
+          "command": "favorites.addToFavorites",
           "group": "favorites"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "favorites.deleteFavorite",
+          "when": "view == favorites && viewItem == resource"
         }
       ]
     },
     "commands": [
       {
-        "command": "extension.addToFavorites",
+        "command": "favorites.addToFavorites",
         "title": "Add to Favorites"
+      },
+      {
+        "command": "favorites.deleteFavorite",
+        "title": "Delete favorite"
       }
     ]
   },
@@ -62,6 +81,5 @@
     "typescript": "^2.3.4",
     "vscode": "^1.1.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
