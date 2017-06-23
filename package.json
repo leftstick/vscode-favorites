@@ -10,7 +10,8 @@
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
     "compile": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install"
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "translate": "rm -rf ./i18n favorites-localization && gulp transifex-push && gulp transifex-pull && gulp i18n-import"
   },
   "categories": [
     "Other"
@@ -68,18 +69,22 @@
     "commands": [
       {
         "command": "favorites.addToFavorites",
-        "title": "Add to Favorites"
+        "title": "%command.favorites.addtofavorites%"
       },
       {
         "command": "favorites.deleteFavorite",
-        "title": "Delete favorite"
+        "title": "%command.favorites.deletefavorite%"
       }
     ]
   },
   "devDependencies": {
     "@types/node": "^7.0.29",
+    "gulp": "^3.9.1",
     "typescript": "^2.3.4",
-    "vscode": "^1.1.0"
+    "vscode": "^1.1.0",
+    "vscode-nls-dev": "^2.1.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "vscode-nls": "^2.0.2"
+  }
 }
