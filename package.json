@@ -79,12 +79,11 @@
   },
   "devDependencies": {
     "@types/node": "^8.0.2",
+    "del": "^3.0.0",
     "gulp": "^3.9.1",
     "typescript": "^2.3.4",
     "vscode": "^1.1.0",
     "vscode-nls-dev": "^2.1.2"
   },
-  "dependencies": {
-    "del": "^3.0.0"
-  }
+  "dependencies": {}
 }
