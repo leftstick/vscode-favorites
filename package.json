@@ -11,7 +11,7 @@
     "vscode:prepublish": "tsc -p ./",
     "compile": "tsc -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "translate": "rm -rf ./i18n favorites-localization && gulp transifex-push && gulp transifex-pull && gulp i18n-import"
+    "translate": "gulp"
   },
   "categories": [
     "Other"
@@ -84,5 +84,7 @@
     "vscode": "^1.1.0",
     "vscode-nls-dev": "^2.1.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "del": "^3.0.0"
+  }
 }
