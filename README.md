@@ -37,7 +37,7 @@ ext install favorites
 
 
 [vs-url]: https://marketplace.visualstudio.com/items?itemName=howardzuo.vscode-favorites
-[vs-image]: http://vsmarketplacebadge.apphb.com/version/howardzuo.vscode-favorites.svg
-[install-url]: http://vsmarketplacebadge.apphb.com/installs/howardzuo.vscode-favorites.svg
-[rate-url]: http://vsmarketplacebadge.apphb.com/rating/howardzuo.vscode-favorites.svg
+[vs-image]: https://vsmarketplacebadge.apphb.com/version/howardzuo.vscode-favorites.svg
+[install-url]: https://vsmarketplacebadge.apphb.com/installs/howardzuo.vscode-favorites.svg
+[rate-url]: https://vsmarketplacebadge.apphb.com/rating/howardzuo.vscode-favorites.svg
 [license-url]: https://img.shields.io/github/license/leftstick/vscode-favorites.svg
