@@ -59,7 +59,17 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
     }
 
     private getFavoriteResources(): Array<string> {
-        return <Array<string>>vscode.workspace.getConfiguration('favorites').get('resources');
+        const resources = <Array<string>>vscode.workspace.getConfiguration('favorites').get('resources');
+        const isAsc = <string>vscode.workspace.getConfiguration('favorites').get('sortOrder') === 'ASC';
+        resources.sort(function (a, b) {
+            const aName = path.basename(a);
+            const bName = path.basename(b);
+            if (aName < bName) {
+                return isAsc ? -1 : 1;
+            }
+            return aName === bName ? 0 : (isAsc ? 1 : -1);
+        });
+        return resources;
     }
 
     private getResourceStat(filePath: string): Thenable<Item> {
