@@ -1,4 +1,6 @@
 {
 	"command.favorites.addtofavorites": "Add to Favorites",
-	"command.favorites.deletefavorite": "Delete favorite"
+	"command.favorites.deletefavorite": "Delete favorite",
+	"command.favorites.moveup": "Move Up",
+	"command.favorites.movedown": "Move Down"
 }

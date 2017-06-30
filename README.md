@@ -26,11 +26,18 @@ ext install favorites
 ```javascript
 {
     "favorites.resources": [] //resources path you prefer to mark
-    "favorites.sortOrder": "ASC" //DESC
+    "favorites.sortOrder": "ASC" //DESC, MANUAL
 }
 ```
 
 >You don't need handle this config manually, but with context menu instead.
+
+## Change Log
+
+### 2017-06-30
+
+1. add sorting support
+2. add `MANUAL` sorting support
 
 ## LICENSE ##
 

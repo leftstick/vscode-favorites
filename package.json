@@ -2,7 +2,7 @@
   "name": "vscode-favorites",
   "displayName": "favorites",
   "description": "An extension helps developer marking resources as favorite. Therefor, those resources can be easily found.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "publisher": "howardzuo",
   "engines": {
     "vscode": "^1.13.0"
@@ -46,7 +46,8 @@
           "type": "string",
           "enum": [
             "ASC",
-            "DESC"
+            "DESC",
+            "MANUAL"
           ],
           "default": "ASC",
           "description": "Speicify an order for all favorites"
@@ -72,6 +73,14 @@
         {
           "command": "favorites.deleteFavorite",
           "when": "view == favorites && viewItem == resource"
+        },
+        {
+          "command": "favorites.moveUp",
+          "when": "view == favorites && viewItem == resource"
+        },
+        {
+          "command": "favorites.moveDown",
+          "when": "view == favorites && viewItem == resource"
         }
       ]
     },
@@ -83,6 +92,14 @@
       {
         "command": "favorites.deleteFavorite",
         "title": "%command.favorites.deletefavorite%"
+      },
+      {
+        "command": "favorites.moveUp",
+        "title": "%command.favorites.moveup%"
+      },
+      {
+        "command": "favorites.moveDown",
+        "title": "%command.favorites.movedown%"
       }
     ]
   },
