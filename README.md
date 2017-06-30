@@ -26,6 +26,7 @@ ext install favorites
 ```javascript
 {
     "favorites.resources": [] //resources path you prefer to mark
+    "favorites.sortOrder": "ASC" //DESC
 }
 ```
 
