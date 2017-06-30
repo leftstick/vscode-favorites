@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import { FavoritesProvider, Resource } from './provider/FavoritesProvider';
 
-import { registerAddToFavorites, registerDeleteFavorite, registerMoveUp, registerMoveDown } from './command';
+import { addToFavorites, deleteFavorite, moveUp, moveDown, moveToTop, moveToBottom } from './command';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -21,10 +21,12 @@ export function activate(context: vscode.ExtensionContext) {
         favoritesProvider.refresh();
     }, this, context.subscriptions);
 
-    context.subscriptions.push(registerAddToFavorites());
-    context.subscriptions.push(registerDeleteFavorite());
-    context.subscriptions.push(registerMoveUp(favoritesProvider));
-    context.subscriptions.push(registerMoveDown(favoritesProvider));
+    context.subscriptions.push(addToFavorites());
+    context.subscriptions.push(deleteFavorite());
+    context.subscriptions.push(moveUp(favoritesProvider));
+    context.subscriptions.push(moveDown(favoritesProvider));
+    context.subscriptions.push(moveToTop(favoritesProvider));
+    context.subscriptions.push(moveToBottom(favoritesProvider));
 
 }
 

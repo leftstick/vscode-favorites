@@ -2,5 +2,7 @@
 	"command.favorites.addtofavorites": "Add to Favorites",
 	"command.favorites.deletefavorite": "Delete favorite",
 	"command.favorites.moveup": "Move Up",
-	"command.favorites.movedown": "Move Down"
+	"command.favorites.movedown": "Move Down",
+	"command.favorites.movetotop": "Move to Top",
+	"command.favorites.movetobottom": "Move to Bottom"
 }

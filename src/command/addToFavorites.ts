@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-export function registerAddToFavorites() {
+export function addToFavorites() {
     const { rootPath } = vscode.workspace;
 
     return vscode.commands.registerCommand('favorites.addToFavorites', (fileUri?: vscode.Uri) => {

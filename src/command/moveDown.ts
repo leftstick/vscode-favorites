@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 
 import { Resource, FavoritesProvider } from '../provider/FavoritesProvider';
 
-export function registerMoveDown(favoritesProvider: FavoritesProvider) {
+export function moveDown(favoritesProvider: FavoritesProvider) {
     return vscode.commands.registerCommand('favorites.moveDown', async function (value: Resource) {
         const config = vscode.workspace.getConfiguration('favorites');
 

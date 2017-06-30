@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 
 import { Resource } from '../provider/FavoritesProvider';
 
-export function registerDeleteFavorite() {
+export function deleteFavorite() {
 
     return vscode.commands.registerCommand('favorites.deleteFavorite', (value: Resource) => {
         const config = vscode.workspace.getConfiguration('favorites');

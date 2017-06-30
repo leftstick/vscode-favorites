@@ -2,8 +2,8 @@ import * as vscode from 'vscode';
 
 import { Resource, FavoritesProvider } from '../provider/FavoritesProvider';
 
-export function moveUp(favoritesProvider: FavoritesProvider) {
-    return vscode.commands.registerCommand('favorites.moveUp', async function (value: Resource) {
+export function moveToTop(favoritesProvider: FavoritesProvider) {
+    return vscode.commands.registerCommand('favorites.moveToTop', async function (value: Resource) {
         const config = vscode.workspace.getConfiguration('favorites');
 
         const items = await favoritesProvider.getChildren();
@@ -15,13 +15,10 @@ export function moveUp(favoritesProvider: FavoritesProvider) {
 
         const resources: Array<string> = [];
 
+        resources.push(value.value);
+
         for (let i = 0; i < items.length; i++) {
-            if (i === currentIndex - 1) {
-                resources.push(value.value);
-                continue;
-            }
             if (i === currentIndex) {
-                resources.push(items[i - 1].value);
                 continue;
             }
             resources.push(items[i].value);
