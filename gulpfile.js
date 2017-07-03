@@ -2,7 +2,7 @@ const gulp = require('gulp');
 const nls = require('vscode-nls-dev');
 const del = require('del');
 
-const vscodeLanguages = ['zh-CN', 'en']; // languages an extension has to be translated to
+const vscodeLanguages = ['zh-CN']; // languages an extension has to be translated to
 
 const transifexApiHostname = 'www.transifex.com';
 const transifexApiName = 'api';
