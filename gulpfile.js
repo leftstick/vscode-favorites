@@ -1,8 +1,11 @@
 const gulp = require('gulp');
+const rename = require('gulp-rename');
+const fs = require('fs');
+const path = require('path');
 const nls = require('vscode-nls-dev');
 const del = require('del');
 
-const vscodeLanguages = ['zh-CN']; // languages an extension has to be translated to
+const vscodeLanguages = ['zh-cn', 'zh-tw']; // languages an extension has to be translated to
 
 const transifexApiHostname = 'www.transifex.com';
 const transifexApiName = 'api';
@@ -10,6 +13,8 @@ const transifexApiToken = process.env.TOKEN; // token to talk to Transifex (to o
 const transifexProjectName = 'vscode-favorites'; // your project name in Transifex
 const transifexExtensionName = 'favorites'; // your resource name in Transifex
 
+
+const iso639_3_to_2 = {chs: 'zh-cn', cht: 'zh-tw'};
 
 gulp.task('clean', function(cb) {
     return del(['i18n', 'favorites-localization'], cb);;
@@ -35,4 +40,22 @@ gulp.task('i18n-import', ['transifex-pull'], function() {
         .pipe(gulp.dest('./i18n'));
 });
 
-gulp.task('default', ['i18n-import']);
+gulp.task('prepare-package-nls-json', ['i18n-import'], function() {
+    return new Promise(function(res) {
+        fs.readdir('./i18n/', function(err, languages) {
+            Promise
+                .all(languages.map(language => {
+                    return new Promise(resolve => {
+                        gulp
+                            .src(path.join('./i18n/', language, 'package.i18n.json'))
+                            .pipe(rename(`package.nls.${iso639_3_to_2[language]}.json`))
+                            .pipe(gulp.dest('.'))
+                            .on('end', resolve);
+                    });
+                }))
+                .then(res);
+        })
+    });
+});
+
+gulp.task('default', ['prepare-package-nls-json']);
