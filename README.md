@@ -34,6 +34,10 @@ ext install favorites
 
 ## Change Log
 
+### 2017-07-24
+
+1. arrange menu items in natural order
+
 ### 2017-06-30
 
 1. add sorting support
