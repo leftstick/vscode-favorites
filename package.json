@@ -2,10 +2,10 @@
   "name": "vscode-favorites",
   "displayName": "favorites",
   "description": "An extension helps developer marking resources as favorite. Therefor, those resources can be easily found.",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "publisher": "howardzuo",
   "engines": {
-    "vscode": "^1.13.0"
+    "vscode": "^1.19.0"
   },
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
@@ -125,13 +125,13 @@
     ]
   },
   "devDependencies": {
-    "@types/node": "^8.0.15",
+    "@types/node": "^8.5.1",
     "del": "^3.0.0",
     "gulp": "^3.9.1",
     "gulp-rename": "^1.2.2",
-    "typescript": "^2.4.2",
-    "vscode": "^1.1.4",
-    "vscode-nls-dev": "^2.1.3"
+    "typescript": "^2.6.2",
+    "vscode": "^1.1.10",
+    "vscode-nls-dev": "^2.1.6"
   },
   "dependencies": {}
 }
