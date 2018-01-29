@@ -30,9 +30,13 @@ ext install favorites
 }
 ```
 
->You don't need handle this config manually, but with context menu instead.
+> You don't need handle this config manually, but with context menu instead.
 
 ## Change Log
+
+### 2018-01-29
+
+1. add new configuration `saveSeparated`
 
 ### 2017-07-24
 
@@ -43,10 +47,9 @@ ext install favorites
 1. add sorting support
 2. add `MANUAL` sorting support
 
-## LICENSE ##
+## LICENSE
 
 [GPL v3 License](https://raw.githubusercontent.com/leftstick/vscode-favorites/master/LICENSE)
-
 
 [vs-url]: https://marketplace.visualstudio.com/items?itemName=howardzuo.vscode-favorites
 [vs-image]: https://vsmarketplacebadge.apphb.com/version/howardzuo.vscode-favorites.svg

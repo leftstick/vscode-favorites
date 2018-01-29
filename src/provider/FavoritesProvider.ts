@@ -4,16 +4,13 @@ import * as path from 'path'
 import * as os from 'os'
 
 import { isMultiRoots } from '../helper/util'
+import configMgr from '../helper/configMgr'
 import { FileStat } from '../enum'
 import { Item } from '../model'
 
 export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
-  private _onDidChangeTreeData: vscode.EventEmitter<Resource | undefined> = new vscode.EventEmitter<
-    Resource | undefined
-  >()
+  private _onDidChangeTreeData = new vscode.EventEmitter<Resource | undefined>()
   readonly onDidChangeTreeData: vscode.Event<Resource | undefined> = this._onDidChangeTreeData.event
-
-  constructor(private workspaceRoot: string) {}
 
   refresh(): void {
     this._onDidChangeTreeData.fire()
@@ -42,7 +39,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
 
   private getChildrenResources(filePath: string): Thenable<Array<Resource>> {
     return new Promise<Array<Resource>>((resolve, reject) => {
-      fs.readdir(path.resolve(this.workspaceRoot, filePath), (err, files) => {
+      fs.readdir(pathResolve(filePath), (err, files) => {
         if (err) {
           return resolve([])
         }
@@ -55,7 +52,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
   }
 
   private getFavoriteResources(): Array<string> {
-    const resources = <Array<string>>vscode.workspace.getConfiguration('favorites').get('resources')
+    const resources = configMgr.get('resources')
     const sort = <string>vscode.workspace.getConfiguration('favorites').get('sortOrder')
 
     if (sort !== 'MANUAL') {
@@ -74,7 +71,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
 
   private getResourceStat(filePath: string): Thenable<Item> {
     return new Promise(resolve => {
-      fs.stat(path.resolve(this.workspaceRoot, filePath), (err, stat: fs.Stats) => {
+      fs.stat(pathResolve(filePath), (err, stat: fs.Stats) => {
         if (err) {
           return resolve({
             filePath,
@@ -113,9 +110,9 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
           contextValue
         )
       }
-      let uri = vscode.Uri.parse(`file://${path.resolve(this.workspaceRoot, i.filePath)}`)
+      let uri = vscode.Uri.parse(`file://${pathResolve(i.filePath)}`)
       if (os.platform().startsWith('win')) {
-        uri = vscode.Uri.parse(`file:///${path.resolve(this.workspaceRoot, i.filePath)}`.replace(/\\/g, '/'))
+        uri = vscode.Uri.parse(`file:///${pathResolve(i.filePath)}`.replace(/\\/g, '/'))
       }
       return new Resource(
         path.basename(i.filePath),
@@ -142,4 +139,11 @@ export class Resource extends vscode.TreeItem {
   ) {
     super(label, collapsibleState)
   }
+}
+
+function pathResolve(filePath: string) {
+  if (isMultiRoots()) {
+    return filePath
+  }
+  return path.resolve(vscode.workspace.workspaceFolders[0].uri.fsPath, filePath)
 }
