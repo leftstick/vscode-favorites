@@ -34,6 +34,10 @@ ext install favorites
 
 ## Change Log
 
+### 2018-02-23
+
+1. add file icon support
+
 ### 2018-01-29
 
 1. add new configuration `saveSeparated`
