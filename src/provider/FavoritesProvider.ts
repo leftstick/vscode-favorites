@@ -60,6 +60,16 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
       resources.sort(function(a, b) {
         const aName = path.basename(a)
         const bName = path.basename(b)
+        const aStat = fs.statSync(pathResolve(a))
+        const bStat = fs.statSync(pathResolve(b))
+
+        if (aStat.isDirectory() && bStat.isFile()) {
+          return -1
+        }
+        if (aStat.isFile() && bStat.isDirectory()) {
+          return 1
+        }
+
         if (aName < bName) {
           return isAsc ? -1 : 1
         }
@@ -142,6 +152,7 @@ export class Resource extends vscode.TreeItem {
     super(label, collapsibleState)
 
     this.resourceUri = vscode.Uri.file(value)
+    this.tooltip = value
   }
 }
 

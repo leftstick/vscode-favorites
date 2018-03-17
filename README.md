@@ -35,22 +35,27 @@ ext install favorites
 
 ## Change Log
 
+### 2018-03-17
+
+1.  sort favorites for directories and files separately
+2.  add tooltip
+
 ### 2018-02-23
 
-1. add file icon support
+1.  add file icon support
 
 ### 2018-01-29
 
-1. add new configuration `saveSeparated`
+1.  add new configuration `saveSeparated`
 
 ### 2017-07-24
 
-1. arrange menu items in natural order
+1.  arrange menu items in natural order
 
 ### 2017-06-30
 
-1. add sorting support
-2. add `MANUAL` sorting support
+1.  add sorting support
+2.  add `MANUAL` sorting support
 
 ## LICENSE
 
