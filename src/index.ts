@@ -4,7 +4,15 @@ import * as vscode from 'vscode'
 import { FavoritesProvider } from './provider/FavoritesProvider'
 import configMgr from './helper/configMgr'
 
-import { addToFavorites, deleteFavorite, moveUp, moveDown, moveToTop, moveToBottom } from './command'
+import {
+  addToFavorites,
+  deleteFavorite,
+  moveUp,
+  moveDown,
+  moveToTop,
+  moveToBottom,
+  toggleSort
+} from './command'
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -35,6 +43,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(moveDown(favoritesProvider))
   context.subscriptions.push(moveToTop(favoritesProvider))
   context.subscriptions.push(moveToBottom(favoritesProvider))
+  context.subscriptions.push(toggleSort(favoritesProvider))
 }
 
 // this method is called when your extension is deactivated

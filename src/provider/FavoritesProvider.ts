@@ -21,52 +21,63 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
   }
 
   getChildren(element?: Resource): Thenable<Resource[]> {
-    const resources = this.getFavoriteResources()
-    if (!resources || !resources.length) {
-      return Promise.resolve([])
-    }
+    return this.getSortedFavoriteResources().then(resources => {
+      if (!resources || !resources.length) {
+        return []
+      }
 
-    if (!element) {
-      return Promise.all(resources.map(r => this.getResourceStat(r)))
-        .then((data: Array<Item>) => {
-          return data.filter(i => i.stat !== FileStat.NEITHER)
-        })
-        .then((data: Array<Item>) => this.data2Resource(data, 'resource'))
-    }
+      if (!element) {
+        return Promise.all(resources.map(r => this.getResourceStat(r)))
+          .then((data: Array<Item>) => {
+            return data.filter(i => i.stat !== FileStat.NEITHER)
+          })
+          .then((data: Array<Item>) => this.data2Resource(data, 'resource'))
+      }
 
-    return this.getChildrenResources(element.value)
+      return this.getChildrenResources(element.value)
+    })
   }
 
   private getChildrenResources(filePath: string): Thenable<Array<Resource>> {
+    const sort = <string>vscode.workspace.getConfiguration('favorites').get('sortOrder')
+
     return new Promise<Array<Resource>>((resolve, reject) => {
       fs.readdir(pathResolve(filePath), (err, files) => {
         if (err) {
           return resolve([])
         }
 
-        Promise.all(files.map(f => this.getResourceStat(path.join(filePath, f))))
-          .then((data: Array<Item>) => this.data2Resource(data, 'resourceChild'))
+        this.sortResources(files.map(f => path.join(filePath, f)), sort)
+          .then(data => this.data2Resource(data, 'resourceChild'))
           .then(resolve)
       })
     })
   }
 
-  private getFavoriteResources(): Array<string> {
+  private getSortedFavoriteResources(): Thenable<Array<string>> {
     const resources = configMgr.get('resources')
     const sort = <string>vscode.workspace.getConfiguration('favorites').get('sortOrder')
 
-    if (sort !== 'MANUAL') {
-      const isAsc = sort === 'ASC'
-      resources.sort(function(a, b) {
-        const aName = path.basename(a)
-        const bName = path.basename(b)
-        const aStat = fs.statSync(pathResolve(a))
-        const bStat = fs.statSync(pathResolve(b))
+    if (sort === 'MANUAL') {
+      return Promise.resolve(resources)
+    }
 
-        if (aStat.isDirectory() && bStat.isFile()) {
+    return this.sortResources(resources, sort).then(res => res.map(r => r.filePath))
+  }
+
+  private sortResources(resources: Array<string>, sort: string): Thenable<Array<Item>> {
+    return Promise.all(resources.map(r => this.getResourceStat(r))).then(resourceStats => {
+      const isAsc = sort === 'ASC'
+      resourceStats.sort(function(a, b) {
+        const aName = path.basename(a.filePath)
+        const bName = path.basename(b.filePath)
+        const aStat = a.stat
+        const bStat = b.stat
+
+        if (aStat === FileStat.DIRECTORY && bStat === FileStat.FILE) {
           return -1
         }
-        if (aStat.isFile() && bStat.isDirectory()) {
+        if (aStat === FileStat.FILE && bStat === FileStat.DIRECTORY) {
           return 1
         }
 
@@ -75,8 +86,8 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
         }
         return aName === bName ? 0 : isAsc ? 1 : -1
       })
-    }
-    return resources
+      return resourceStats
+    })
   }
 
   private getResourceStat(filePath: string): Thenable<Item> {

@@ -4,3 +4,5 @@ favorites-localization
 i18n
 
 package.nls.*.json
+
+.DS_Store
