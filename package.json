@@ -3,7 +3,7 @@
     "displayName": "favorites",
     "description": "An extension helps developer marking resources as favorite. Therefore, those resources can be easily found.",
     "version": "1.3.2",
-    w "publisher": "howardzuo",
+    "publisher": "howardzuo",
     "engines": {
         "vscode": "^1.21.1"
     },
