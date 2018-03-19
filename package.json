@@ -1,152 +1,141 @@
 {
-  "name": "vscode-favorites",
-  "displayName": "favorites",
-  "description":
-    "An extension helps developer marking resources as favorite. Therefor, those resources can be easily found.",
-  "version": "1.3.2",
-  "publisher": "howardzuo",
-  "engines": {
-    "vscode": "^1.21.1"
-  },
-  "scripts": {
-    "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -watch -p ./",
-    "watch": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "translate": "gulp"
-  },
-  "categories": ["Other"],
-  "icon": "images/favorites.png",
-  "bugs": {
-    "url": "https://github.com/leftstick/vscode-favorites/issues",
-    "email": "leftstick@qq.com"
-  },
-  "homepage": "https://github.com/leftstick/vscode-favorites/blob/master/README.md",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/leftstick/vscode-favorites.git"
-  },
-  "activationEvents": ["onCommand:favorites.addToFavorites", "onView:favorites"],
-  "license": "GPL-3.0",
-  "main": "./out/",
-  "contributes": {
-    "configuration": {
-      "type": "object",
-      "title": "Favorites configuration",
-      "properties": {
-        "favorites.resources": {
-          "type": "array",
-          "default": [],
-          "description": "Resources marked as favorite"
-        },
-        "favorites.sortOrder": {
-          "type": "string",
-          "enum": ["ASC", "DESC", "MANUAL"],
-          "default": "ASC",
-          "description": "Speicify an order for all favorites"
-        },
-        "favorites.saveSeparated": {
-          "type": "boolean",
-          "default": false,
-          "description": "Whether to save marked resources in separate .vscfavoriterc"
-        }
-      }
+    "name": "vscode-favorites",
+    "displayName": "favorites",
+    "description": "An extension helps developer marking resources as favorite. Therefore, those resources can be easily found.",
+    "version": "1.3.2",
+    "publisher": "howardzuo",
+    "engines": {
+        "vscode": "^1.21.1"
     },
-    "views": {
-      "explorer": [
-        {
-          "id": "favorites",
-          "name": "Favorites"
-        }
-      ]
+    "scripts": {
+        "vscode:prepublish": "tsc -p ./",
+        "compile": "tsc -watch -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "translate": "gulp"
     },
-    "menus": {
-      "explorer/context": [
-        {
-          "command": "favorites.addToFavorites",
-          "group": "favorites"
-        }
-      ],
-      "view/title": [
-        {
-          "command": "favorites.nav.sort",
-          "when": "view == favorites",
-          "group": "navigation"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "favorites.deleteFavorite",
-          "when": "view == favorites && viewItem == resource",
-          "group": "operation"
-        },
-        {
-          "command": "favorites.moveToTop",
-          "when": "view == favorites && viewItem == resource",
-          "group": "sort@1"
-        },
-        {
-          "command": "favorites.moveUp",
-          "when": "view == favorites && viewItem == resource",
-          "group": "sort@2"
-        },
-        {
-          "command": "favorites.moveDown",
-          "when": "view == favorites && viewItem == resource",
-          "group": "sort@3"
-        },
-        {
-          "command": "favorites.moveToBottom",
-          "when": "view == favorites && viewItem == resource",
-          "group": "sort@4"
-        }
-      ]
+    "categories": [
+        "Other"
+    ],
+    "icon": "images/favorites.png",
+    "bugs": {
+        "url": "https://github.com/leftstick/vscode-favorites/issues",
+        "email": "leftstick@qq.com"
     },
-    "commands": [
-      {
-        "command": "favorites.nav.sort",
-        "title": "%command.favorites.sort%",
-        "icon": {
-          "dark": "images/sort_black.svg",
-          "light": "images/sort_light.svg"
-        }
-      },
-      {
-        "command": "favorites.addToFavorites",
-        "title": "%command.favorites.addtofavorites%"
-      },
-      {
-        "command": "favorites.deleteFavorite",
-        "title": "%command.favorites.deletefavorite%"
-      },
-      {
-        "command": "favorites.moveUp",
-        "title": "%command.favorites.moveup%"
-      },
-      {
-        "command": "favorites.moveDown",
-        "title": "%command.favorites.movedown%"
-      },
-      {
-        "command": "favorites.moveToTop",
-        "title": "%command.favorites.movetotop%"
-      },
-      {
-        "command": "favorites.moveToBottom",
-        "title": "%command.favorites.movetobottom%"
-      }
-    ]
-  },
-  "devDependencies": {
-    "@types/node": "^9.4.7",
-    "del": "^3.0.0",
-    "gulp": "^3.9.1",
-    "gulp-rename": "^1.2.2",
-    "typescript": "^2.7.2",
-    "vscode": "^1.1.13",
-    "vscode-nls-dev": "^2.1.6"
-  },
-  "dependencies": {
-    "nconf": "^0.10.0"
-  }
+    "homepage": "https://github.com/leftstick/vscode-favorites/blob/master/README.md",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/leftstick/vscode-favorites.git"
+    },
+    "activationEvents": [
+        "onCommand:favorites.addToFavorites",
+        "onView:favorites"
+    ],
+    "license": "GPL-3.0",
+    "main": "./out/",
+    "contributes": {
+        "configuration": {
+            "type": "object",
+            "title": "Favorites configuration",
+            "properties": {
+                "favorites.resources": {
+                    "type": "array",
+                    "default": [],
+                    "description": "Resources marked as favorite"
+                },
+                "favorites.sortOrder": {
+                    "type": "string",
+                    "enum": [
+                        "ASC",
+                        "DESC"
+                    ],
+                    "default": "ASC",
+                    "description": "Specify an order for all favorites"
+                },
+                "favorites.saveSeparated": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Whether to save marked resources in separate .vscfavoriterc"
+                }
+            }
+        },
+        "views": {
+            "explorer": [{
+                "id": "favorites",
+                "name": "Favorites"
+            }]
+        },
+        "menus": {
+            "explorer/context": [{
+                "command": "favorites.addToFavorites",
+                "group": "favorites"
+            }],
+            "view/title": [{
+                    "command": "favorites.nav.sort.az",
+                    "when": "view == favorites && sort==DESC",
+                    "group": "navigation"
+                },
+                {
+                    "command": "favorites.nav.sort.za",
+                    "when": "view == favorites && sort==ASC",
+                    "group": "navigation"
+                },
+                {
+                    "command": "favorites.collapse",
+                    "when": "view == favorites",
+                    "group": "navigation"
+                }
+            ],
+            "view/item/context": [{
+                "command": "favorites.deleteFavorite",
+                "when": "view == favorites && viewItem == resource",
+                "group": "operation"
+            }]
+        },
+        "commands": [{
+                "command": "favorites.nav.sort.az",
+                "title": "%command.favorites.sort%",
+                "icon": {
+                    "dark": "images/sort_dark_za.svg",
+                    "light": "images/sort_light_za.svg"
+                }
+            },
+            {
+                "command": "favorites.nav.sort.za",
+                "title": "%command.favorites.sort%",
+                "icon": {
+                    "dark": "images/sort_dark_az.svg",
+                    "light": "images/sort_light_az.svg"
+                }
+            },
+            {
+                "command": "favorites.collapse",
+                "title": "%command.favorites.collapse%",
+                "icon": {
+                    "dark": "images/collapse_dark.svg",
+                    "light": "images/collapse_light.svg"
+                }
+            },
+            {
+                "command": "favorites.addToFavorites",
+                "title": "%command.favorites.addtofavorites%"
+            },
+            {
+                "command": "favorites.deleteFavorite",
+                "title": "%command.favorites.deletefavorite%"
+            }
+        ]
+    },
+    "devDependencies": {
+        "@types/node": "^9.4.7",
+        "del": "^3.0.0",
+        "gulp": "^3.9.1",
+        "gulp-rename": "^1.2.2",
+        "typescript": "^2.7.2",
+        "vscode": "^1.1.13",
+        "vscode-nls-dev": "^2.1.6"
+    },
+    "dependencies": {
+        "nconf": "^0.10.0"
+    }
 }
