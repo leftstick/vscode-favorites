@@ -35,6 +35,11 @@ ext install favorites
 
 ## Change Log
 
+### 2018-03-19
+
+1.  add sort button at navigation bar
+2.  refactor sort func to fix [sort issue](https://github.com/leftstick/vscode-favorites/issues/3#issuecomment-373995913)
+
 ### 2018-03-17
 
 1.  sort favorites for directories and files separately
