@@ -5,7 +5,7 @@
 ![][rate-url]
 ![][license-url]
 
-An extension helps developer marking resources as favorite. Therefor, those resources can be easily found.
+An extension helps developer marking resources as favorite. Therefore, those resources can be easily found.
 
 ![](https://raw.githubusercontent.com/leftstick/vscode-favorites/master/images/preview.gif)
 
