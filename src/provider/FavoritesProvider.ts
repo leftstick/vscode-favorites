@@ -150,7 +150,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
 
             return new Resource(
                 path.basename(i.filePath),
-                vscode.TreeItemCollapsibleState.Collapsed,
+                vscode.TreeItemCollapsibleState.None,
                 i.filePath,
                 contextValue,
                 {
