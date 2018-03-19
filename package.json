@@ -47,11 +47,10 @@
                     "type": "string",
                     "enum": [
                         "ASC",
-                        "DESC",
-                        "MANUAL"
+                        "DESC"
                     ],
                     "default": "ASC",
-                    "description": "Speicify an order for all favorites"
+                    "description": "Specify an order for all favorites"
                 },
                 "favorites.saveSeparated": {
                     "type": "boolean",
@@ -88,31 +87,10 @@
                 }
             ],
             "view/item/context": [{
-                    "command": "favorites.deleteFavorite",
-                    "when": "view == favorites && viewItem == resource",
-                    "group": "operation"
-                },
-                {
-                    "command": "favorites.moveToTop",
-                    "when": "view == favorites && viewItem == resource",
-                    "group": "sort@1"
-                },
-                {
-                    "command": "favorites.moveUp",
-                    "when": "view == favorites && viewItem == resource",
-                    "group": "sort@2"
-                },
-                {
-                    "command": "favorites.moveDown",
-                    "when": "view == favorites && viewItem == resource",
-                    "group": "sort@3"
-                },
-                {
-                    "command": "favorites.moveToBottom",
-                    "when": "view == favorites && viewItem == resource",
-                    "group": "sort@4"
-                }
-            ]
+                "command": "favorites.deleteFavorite",
+                "when": "view == favorites && viewItem == resource",
+                "group": "operation"
+            }]
         },
         "commands": [{
                 "command": "favorites.nav.sort.az",
@@ -145,22 +123,6 @@
             {
                 "command": "favorites.deleteFavorite",
                 "title": "%command.favorites.deletefavorite%"
-            },
-            {
-                "command": "favorites.moveUp",
-                "title": "%command.favorites.moveup%"
-            },
-            {
-                "command": "favorites.moveDown",
-                "title": "%command.favorites.movedown%"
-            },
-            {
-                "command": "favorites.moveToTop",
-                "title": "%command.favorites.movetotop%"
-            },
-            {
-                "command": "favorites.moveToBottom",
-                "title": "%command.favorites.movetobottom%"
             }
         ]
     },

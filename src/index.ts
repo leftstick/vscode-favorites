@@ -24,8 +24,12 @@ export function activate(context: vscode.ExtensionContext) {
     // Use the console to output diagnostic information (console.log) and errors (console.error)
     // This line of code will only be executed once when your extension is activated
     const config = vscode.workspace.getConfiguration('favorites')
-    const sort = <string>config.get('sortOrder')
+    const configSort = <string>config.get('sortOrder');
+    const sort = (configSort === "DESC" || configSort === "ASC") ? configSort : "ASC";
+
     vscode.commands.executeCommand('setContext', 'sort', sort);
+    config.update('sortOrder', sort, false)
+
 
     global.vscode = vscode;
     global.commands = [];
@@ -54,10 +58,6 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(addToFavorites())
     context.subscriptions.push(deleteFavorite())
-    context.subscriptions.push(moveUp(favoritesProvider))
-    context.subscriptions.push(moveDown(favoritesProvider))
-    context.subscriptions.push(moveToTop(favoritesProvider))
-    context.subscriptions.push(moveToBottom(favoritesProvider))
     context.subscriptions.push(setSortAsc(favoritesProvider))
     context.subscriptions.push(setSortDesc(favoritesProvider))
     context.subscriptions.push(collapse(favoritesProvider))
