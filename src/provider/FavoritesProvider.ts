@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'
 
-import { isMultiRoots } from '../helper/util'
+import { isMultiRoots, pathResolve } from '../helper/util'
 import configMgr from '../helper/configMgr'
 import { FileStat } from '../enum'
 import { Item } from '../model'
@@ -165,11 +165,4 @@ export class Resource extends vscode.TreeItem {
     this.resourceUri = vscode.Uri.file(value)
     this.tooltip = value
   }
-}
-
-function pathResolve(filePath: string) {
-  if (isMultiRoots()) {
-    return filePath
-  }
-  return path.resolve(vscode.workspace.workspaceFolders[0].uri.fsPath, filePath)
 }
