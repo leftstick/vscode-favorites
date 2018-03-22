@@ -10,7 +10,7 @@ export function toggleSort(favoritesProvider: FavoritesProvider) {
     const sort = <string>config.get('sortOrder')
 
     if (sort === 'MANUAL') {
-      return
+      return config.update('sortOrder', 'ASC', false)
     }
 
     if (sort === 'ASC') {
