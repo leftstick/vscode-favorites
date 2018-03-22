@@ -47,7 +47,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
           return resolve([])
         }
 
-        this.sortResources(files.map(f => path.join(filePath, f)), sort)
+        this.sortResources(files.map(f => path.join(filePath, f)), sort === 'MANUAL' ? 'ASC' : sort)
           .then(data => this.data2Resource(data, 'resourceChild'))
           .then(resolve)
       })
