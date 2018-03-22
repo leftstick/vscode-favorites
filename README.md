@@ -35,6 +35,12 @@ ext install favorites
 
 ## Change Log
 
+### 2018-03-22
+
+1.  enable add/delete func for activeEditor. Which means you can now add/delete assets from an active editor
+2.  enter into ASC mode while click `toggleSort` button in MANUAL mode
+3.  sort descendant assets in ASC mode while in MANUAL mode
+
 ### 2018-03-19
 
 1.  add sort button at navigation bar
