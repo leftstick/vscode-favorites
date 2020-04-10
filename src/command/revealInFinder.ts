@@ -7,6 +7,8 @@ export function revealInFinder() {
     if (!value && !vscode.window.activeTextEditor) {
       return vscode.window.showWarningMessage('You have to choose a resource first')
     }
-    await vscode.commands.executeCommand('revealFileInOS', value.uri)
+    if (value.uri) {
+      await vscode.commands.executeCommand('revealFileInOS', value.uri)
+    }
   })
 }
