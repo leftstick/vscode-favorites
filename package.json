@@ -1,8 +1,7 @@
 {
   "name": "vscode-favorites",
   "displayName": "favorites",
-  "description":
-    "An extension helps developer marking resources as favorite. Therefor, those resources can be easily found.",
+  "description": "An extension helps developer marking resources as favorite. Therefor, those resources can be easily found.",
   "version": "1.4.0",
   "publisher": "howardzuo",
   "engines": {
@@ -15,7 +14,9 @@
     "postinstall": "node ./node_modules/vscode/bin/install",
     "translate": "gulp"
   },
-  "categories": ["Other"],
+  "categories": [
+    "Other"
+  ],
   "icon": "images/favorites.png",
   "bugs": {
     "url": "https://github.com/leftstick/vscode-favorites/issues",
@@ -26,7 +27,10 @@
     "type": "git",
     "url": "https://github.com/leftstick/vscode-favorites.git"
   },
-  "activationEvents": ["onCommand:favorites.addToFavorites", "onView:favorites"],
+  "activationEvents": [
+    "onCommand:favorites.addToFavorites",
+    "onView:favorites"
+  ],
   "license": "GPL-3.0",
   "main": "./out/",
   "contributes": {
@@ -41,7 +45,11 @@
         },
         "favorites.sortOrder": {
           "type": "string",
-          "enum": ["ASC", "DESC", "MANUAL"],
+          "enum": [
+            "ASC",
+            "DESC",
+            "MANUAL"
+          ],
           "default": "ASC",
           "description": "Speicify an order for all favorites"
         },
@@ -85,6 +93,11 @@
         }
       ],
       "view/item/context": [
+        {
+          "command": "favorites.revealInFinder",
+          "when": "view == favorites && viewItem == resource",
+          "group": "navigation"
+        },
         {
           "command": "favorites.deleteFavorite",
           "when": "view == favorites && viewItem == resource",
@@ -144,6 +157,10 @@
       {
         "command": "favorites.moveToBottom",
         "title": "%command.favorites.movetobottom%"
+      },
+      {
+        "command": "favorites.revealInFinder",
+        "title": "%command.favorites.revealInFinder%"
       }
     ]
   },

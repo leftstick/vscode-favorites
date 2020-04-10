@@ -11,7 +11,8 @@ import {
   moveDown,
   moveToTop,
   moveToBottom,
-  toggleSort
+  toggleSort,
+  revealInFinder,
 } from './command'
 
 // this method is called when your extension is activated
@@ -39,6 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(addToFavorites())
   context.subscriptions.push(deleteFavorite())
+  context.subscriptions.push(revealInFinder(favoritesProvider))
   context.subscriptions.push(moveUp(favoritesProvider))
   context.subscriptions.push(moveDown(favoritesProvider))
   context.subscriptions.push(moveToTop(favoritesProvider))
