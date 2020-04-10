@@ -2,8 +2,11 @@ import * as vscode from 'vscode'
 
 import { Resource, FavoritesProvider } from '../provider/FavoritesProvider'
 
-export function revealInFinder(favoritesProvider: FavoritesProvider) {
+export function revealInFinder() {
   return vscode.commands.registerCommand('favorites.revealInFinder', async function (value: Resource) {
-    console.log('this is reveal in finder')
+    if (!value && !vscode.window.activeTextEditor) {
+      return vscode.window.showWarningMessage('You have to choose a resource first')
+    }
+    await vscode.commands.executeCommand('revealFileInOS', value.uri)
   })
 }

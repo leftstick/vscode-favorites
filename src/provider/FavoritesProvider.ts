@@ -21,15 +21,15 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
   }
 
   getChildren(element?: Resource): Thenable<Resource[]> {
-    return this.getSortedFavoriteResources().then(resources => {
+    return this.getSortedFavoriteResources().then((resources) => {
       if (!resources || !resources.length) {
         return []
       }
 
       if (!element) {
-        return Promise.all(resources.map(r => this.getResourceStat(r)))
+        return Promise.all(resources.map((r) => this.getResourceStat(r)))
           .then((data: Array<Item>) => {
-            return data.filter(i => i.stat !== FileStat.NEITHER)
+            return data.filter((i) => i.stat !== FileStat.NEITHER)
           })
           .then((data: Array<Item>) => this.data2Resource(data, 'resource'))
       }
@@ -47,8 +47,11 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
           return resolve([])
         }
 
-        this.sortResources(files.map(f => path.join(filePath, f)), sort === 'MANUAL' ? 'ASC' : sort)
-          .then(data => this.data2Resource(data, 'resourceChild'))
+        this.sortResources(
+          files.map((f) => path.join(filePath, f)),
+          sort === 'MANUAL' ? 'ASC' : sort
+        )
+          .then((data) => this.data2Resource(data, 'resourceChild'))
           .then(resolve)
       })
     })
@@ -62,13 +65,13 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
       return Promise.resolve(resources)
     }
 
-    return this.sortResources(resources, sort).then(res => res.map(r => r.filePath))
+    return this.sortResources(resources, sort).then((res) => res.map((r) => r.filePath))
   }
 
   private sortResources(resources: Array<string>, sort: string): Thenable<Array<Item>> {
-    return Promise.all(resources.map(r => this.getResourceStat(r))).then(resourceStats => {
+    return Promise.all(resources.map((r) => this.getResourceStat(r))).then((resourceStats) => {
       const isAsc = sort === 'ASC'
-      resourceStats.sort(function(a, b) {
+      resourceStats.sort(function (a, b) {
         const aName = path.basename(a.filePath)
         const bName = path.basename(b.filePath)
         const aStat = a.stat
@@ -91,29 +94,29 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
   }
 
   private getResourceStat(filePath: string): Thenable<Item> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       fs.stat(pathResolve(filePath), (err, stat: fs.Stats) => {
         if (err) {
           return resolve({
             filePath,
-            stat: FileStat.NEITHER
+            stat: FileStat.NEITHER,
           })
         }
         if (stat.isDirectory()) {
           return resolve({
             filePath,
-            stat: FileStat.DIRECTORY
+            stat: FileStat.DIRECTORY,
           })
         }
         if (stat.isFile()) {
           return resolve({
             filePath,
-            stat: FileStat.FILE
+            stat: FileStat.FILE,
           })
         }
         return resolve({
           filePath,
-          stat: FileStat.NEITHER
+          stat: FileStat.NEITHER,
         })
       })
     })
@@ -122,19 +125,22 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
   private data2Resource(data: Array<Item>, contextValue: string): Array<Resource> {
     const enablePreview = <boolean>vscode.workspace.getConfiguration('workbench.editor').get('enablePreview')
 
-    return data.map(i => {
+    return data.map((i) => {
+      let uri = vscode.Uri.parse(`file://${pathResolve(i.filePath)}`)
+      if (os.platform().startsWith('win')) {
+        uri = vscode.Uri.parse(`file:///${pathResolve(i.filePath)}`.replace(/\\/g, '/'))
+      }
       if (i.stat === FileStat.DIRECTORY) {
         return new Resource(
           path.basename(i.filePath),
           vscode.TreeItemCollapsibleState.Collapsed,
           i.filePath,
-          contextValue
+          contextValue,
+          undefined,
+          uri
         )
       }
-      let uri = vscode.Uri.parse(`file://${pathResolve(i.filePath)}`)
-      if (os.platform().startsWith('win')) {
-        uri = vscode.Uri.parse(`file:///${pathResolve(i.filePath)}`.replace(/\\/g, '/'))
-      }
+
       return new Resource(
         path.basename(i.filePath),
         vscode.TreeItemCollapsibleState.None,
@@ -143,8 +149,9 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
         {
           command: 'vscode.open',
           title: '',
-          arguments: [uri, { preview: enablePreview }]
-        }
+          arguments: [uri, { preview: enablePreview }],
+        },
+        uri
       )
     })
   }
@@ -158,7 +165,8 @@ export class Resource extends vscode.TreeItem {
     public collapsibleState: vscode.TreeItemCollapsibleState,
     public value: string,
     public contextValue: string,
-    public command?: vscode.Command
+    public command?: vscode.Command,
+    public uri?: vscode.Uri
   ) {
     super(label, collapsibleState)
 
