@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
 
-import { Resource, FavoritesProvider } from '../provider/FavoritesProvider'
+import { Resource } from '../provider/FavoritesProvider'
 
 export function revealInFinder() {
   return vscode.commands.registerCommand('favorites.revealInFinder', async function (value: Resource) {

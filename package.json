@@ -2,7 +2,7 @@
   "name": "vscode-favorites",
   "displayName": "favorites",
   "description": "An extension helps developer marking resources as favorite. Therefor, those resources can be easily found.",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "publisher": "howardzuo",
   "engines": {
     "vscode": "^1.21.1"
