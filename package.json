@@ -64,7 +64,7 @@
       "explorer": [
         {
           "id": "favorites",
-          "name": "Favorites"
+          "name": "%view.favorites.title%"
         }
       ]
     },
@@ -165,13 +165,18 @@
     ]
   },
   "devDependencies": {
-    "@types/node": "^9.4.7",
-    "del": "^3.0.0",
-    "gulp": "^3.9.1",
-    "gulp-rename": "^1.2.2",
-    "typescript": "^2.7.2",
-    "vscode": "^1.1.13",
-    "vscode-nls-dev": "^2.1.6"
+    "@types/node": "^13.11.1",
+    "del": "^5.1.0",
+    "event-stream": "^4.0.1",
+    "gulp": "^4.0.2",
+    "gulp-rename": "^2.0.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "run-sequence": "^2.2.1",
+    "typescript": "^3.8.3",
+    "vsce": "^1.75.0",
+    "vscode": "^1.1.36",
+    "vscode-nls-dev": "^3.3.1"
   },
   "dependencies": {
     "nconf": "^0.10.0"

@@ -1,0 +1,11 @@
+{
+  "command.favorites.addtofavorites": "添加到收藏",
+  "command.favorites.deletefavorite": "从收藏中删除",
+  "command.favorites.moveup": "上移",
+  "command.favorites.movedown": "下移",
+  "command.favorites.movetotop": "上移至顶",
+  "command.favorites.movetobottom": "下移至底",
+  "command.favorites.sort": "切换排序",
+  "command.favorites.revealInFinder": "从系统中打开",
+  "view.favorites.title": "收藏"
+}
