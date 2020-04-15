@@ -35,6 +35,10 @@ ext install favorites
 
 ## Change Log
 
+### 2020-04-15
+
+1. support `Reveal In Finder`
+
 ### 2018-03-22
 
 1.  enable add/delete func for activeEditor. Which means you can now add/delete assets from an active editor
