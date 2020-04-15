@@ -20,7 +20,7 @@ const outDest = 'out'
 const languages = [{ folderName: 'zh-cn', id: 'zh-cn' }]
 
 const cleanTask = function () {
-  return del(['out/**', 'package.nls.*.json', '*.vsix'])
+  return del(['out', 'package.nls.*.json', '*.vsix'])
 }
 
 const internalCompileTask = function () {
