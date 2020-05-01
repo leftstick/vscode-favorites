@@ -4,14 +4,19 @@ import configMgr from '../helper/configMgr'
 
 export function addToFavorites() {
   return vscode.commands.registerCommand('favorites.addToFavorites', (fileUri?: vscode.Uri) => {
-    if (!fileUri && !vscode.window.activeTextEditor) {
-      return vscode.window.showWarningMessage('You have to choose a resource first')
+    if (!fileUri) {
+      if (!vscode.window.activeTextEditor) {
+        return vscode.window.showWarningMessage('You have to choose a resource first')
+      }
+      fileUri = vscode.window.activeTextEditor.document.uri
     }
 
-    const fileName = fileUri ? fileUri.fsPath : vscode.window.activeTextEditor.document.uri.fsPath
+    const fileName = fileUri.fsPath
 
     const previousResources = configMgr.get('resources')
-    const newResource = isMultiRoots() ? fileName : fileName.substr(getSingleRootPath().length + 1)
+
+    // Store the stringified uri for any resource that isn't a file
+    const newResource = (fileUri.scheme !== 'file') ? fileUri.toString() : (isMultiRoots() ? fileName : fileName.substr(getSingleRootPath().length + 1))
 
     if (previousResources.some(r => r === newResource)) {
       return

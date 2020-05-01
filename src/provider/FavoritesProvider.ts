@@ -95,30 +95,41 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
 
   private getResourceStat(filePath: string): Thenable<Item> {
     return new Promise((resolve) => {
-      fs.stat(pathResolve(filePath), (err, stat: fs.Stats) => {
-        if (err) {
+      if (filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:\/\//)) {
+        // filePath is a uri string
+        return resolve({
+          filePath,
+          stat: FileStat.FILE,
+          uri: vscode.Uri.parse(filePath)
+        })
+      }
+      else {
+        // filePath is a file path
+        fs.stat(pathResolve(filePath), (err, stat: fs.Stats) => {
+          if (err) {
+            return resolve({
+              filePath,
+              stat: FileStat.NEITHER,
+            })
+          }
+          if (stat.isDirectory()) {
+            return resolve({
+              filePath,
+              stat: FileStat.DIRECTORY,
+            })
+          }
+          if (stat.isFile()) {
+            return resolve({
+              filePath,
+              stat: FileStat.FILE,
+            })
+          }
           return resolve({
             filePath,
             stat: FileStat.NEITHER,
           })
-        }
-        if (stat.isDirectory()) {
-          return resolve({
-            filePath,
-            stat: FileStat.DIRECTORY,
-          })
-        }
-        if (stat.isFile()) {
-          return resolve({
-            filePath,
-            stat: FileStat.FILE,
-          })
-        }
-        return resolve({
-          filePath,
-          stat: FileStat.NEITHER,
         })
-      })
+      }
     })
   }
 
@@ -126,33 +137,49 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
     const enablePreview = <boolean>vscode.workspace.getConfiguration('workbench.editor').get('enablePreview')
 
     return data.map((i) => {
-      let uri = vscode.Uri.parse(`file://${pathResolve(i.filePath)}`)
-      if (os.platform().startsWith('win')) {
-        uri = vscode.Uri.parse(`file:///${pathResolve(i.filePath)}`.replace(/\\/g, '/'))
-      }
-      if (i.stat === FileStat.DIRECTORY) {
+      if (!i.uri) {
+        let uri = vscode.Uri.parse(`file://${pathResolve(i.filePath)}`)
+        if (os.platform().startsWith('win')) {
+          uri = vscode.Uri.parse(`file:///${pathResolve(i.filePath)}`.replace(/\\/g, '/'))
+        }
+        if (i.stat === FileStat.DIRECTORY) {
+          return new Resource(
+            path.basename(i.filePath),
+            vscode.TreeItemCollapsibleState.Collapsed,
+            i.filePath,
+            contextValue,
+            undefined,
+            uri
+          )
+        }
+
         return new Resource(
           path.basename(i.filePath),
-          vscode.TreeItemCollapsibleState.Collapsed,
+          vscode.TreeItemCollapsibleState.None,
           i.filePath,
           contextValue,
-          undefined,
+          {
+            command: 'vscode.open',
+            title: '',
+            arguments: [uri, { preview: enablePreview }],
+          },
           uri
         )
       }
-
-      return new Resource(
-        path.basename(i.filePath),
-        vscode.TreeItemCollapsibleState.None,
-        i.filePath,
-        contextValue,
-        {
-          command: 'vscode.open',
-          title: '',
-          arguments: [uri, { preview: enablePreview }],
-        },
-        uri
-      )
+      else {
+        return new Resource(
+          path.basename(i.filePath),
+          vscode.TreeItemCollapsibleState.None,
+          i.filePath,
+          contextValue,
+          {
+            command: 'vscode.open',
+            title: '',
+            arguments: [i.uri, { preview: enablePreview }],
+          },
+          i.uri
+        )
+      }
     })
   }
 }
