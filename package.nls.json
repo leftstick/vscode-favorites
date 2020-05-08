@@ -1,11 +1,11 @@
 {
   "command.favorites.addtofavorites": "Add to Favorites",
-  "command.favorites.deletefavorite": "Delete favorite",
+  "command.favorites.deletefavorite": "Remove from Favorites",
   "command.favorites.moveup": "Move Up",
   "command.favorites.movedown": "Move Down",
   "command.favorites.movetotop": "Move to Top",
   "command.favorites.movetobottom": "Move to Bottom",
-  "command.favorites.sort": "Toggle sort",
-  "command.favorites.revealInFinder": "Reveal In Finder",
+  "command.favorites.sort": "Toggle Sort",
+  "command.favorites.revealInFinder": "Reveal in Finder",
   "view.favorites.title": "Favorites"
 }
