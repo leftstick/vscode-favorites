@@ -5,7 +5,7 @@
   "version": "1.5.1",
   "publisher": "howardzuo",
   "engines": {
-    "vscode": "^1.21.1"
+    "vscode": "^1.45.0"
   },
   "scripts": {
     "watch": "tsc -watch -p ./",
@@ -51,7 +51,7 @@
             "MANUAL"
           ],
           "default": "ASC",
-          "description": "Speicify an order for all favorites"
+          "description": "Specify an order for all favorites"
         },
         "favorites.saveSeparated": {
           "type": "boolean",

@@ -9,8 +9,8 @@ import { FileStat } from '../enum'
 import { Item } from '../model'
 
 export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
-  private _onDidChangeTreeData = new vscode.EventEmitter<Resource | undefined>()
-  readonly onDidChangeTreeData: vscode.Event<Resource | undefined> = this._onDidChangeTreeData.event
+  private _onDidChangeTreeData = new vscode.EventEmitter<Resource | void>()
+  readonly onDidChangeTreeData: vscode.Event<Resource | void> = this._onDidChangeTreeData.event
 
   refresh(): void {
     this._onDidChangeTreeData.fire()
@@ -41,6 +41,19 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
   private getChildrenResources(filePath: string): Thenable<Array<Resource>> {
     const sort = <string>vscode.workspace.getConfiguration('favorites').get('sortOrder')
 
+    if (filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:\/\//)) {
+      // filePath is a uri string
+      const uri = vscode.Uri.parse(filePath)
+      return vscode.workspace.fs.readDirectory(uri)
+        .then((entries) => this.sortResources(
+          entries.map((e) => vscode.Uri.joinPath(uri, e[0]).toString()),
+          sort === 'MANUAL' ? 'ASC' : sort
+        )
+        )
+        .then((items) => this.data2Resource(items, 'resourceChild'))
+    }
+
+    // Not a uri string
     return new Promise<Array<Resource>>((resolve, reject) => {
       fs.readdir(pathResolve(filePath), (err, files) => {
         if (err) {
@@ -97,11 +110,31 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
     return new Promise((resolve) => {
       if (filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:\/\//)) {
         // filePath is a uri string
-        return resolve({
-          filePath,
-          stat: FileStat.FILE,
-          uri: vscode.Uri.parse(filePath)
-        })
+        const uri = vscode.Uri.parse(filePath)
+        resolve(
+          vscode.workspace.fs.stat(uri)
+            .then((fileStat) => {
+              if (fileStat.type === vscode.FileType.File) {
+                return {
+                  filePath,
+                  stat: FileStat.FILE,
+                  uri
+                }
+              }
+              if (fileStat.type === vscode.FileType.Directory) {
+                return {
+                  filePath,
+                  stat: FileStat.DIRECTORY,
+                  uri
+                }
+              }
+              return {
+                filePath,
+                stat: FileStat.NEITHER,
+                uri
+              }
+            })
+        )
       }
       else {
         // filePath is a file path
@@ -167,6 +200,16 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
         )
       }
       else {
+        if (i.stat === FileStat.DIRECTORY) {
+          return new Resource(
+            path.basename(i.filePath),
+            vscode.TreeItemCollapsibleState.Collapsed,
+            i.filePath,
+            contextValue,
+            undefined,
+            i.uri
+          )
+        }
         return new Resource(
           path.basename(i.filePath),
           vscode.TreeItemCollapsibleState.None,
@@ -197,7 +240,7 @@ export class Resource extends vscode.TreeItem {
   ) {
     super(label, collapsibleState)
 
-    this.resourceUri = vscode.Uri.file(value)
+    this.resourceUri = (uri) ? uri : vscode.Uri.file(value)
     this.tooltip = value
   }
 }
