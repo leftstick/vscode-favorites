@@ -123,6 +123,32 @@
           "when": "view == favorites && viewItem == resource",
           "group": "sort@4"
         }
+      ],
+      "commandPalette": [
+        {
+          "command": "favorites.nav.sort",
+          "when": "false"
+        },
+        {
+          "command": "favorites.revealInFinder",
+          "when": "false"
+        },
+        {
+          "command": "favorites.moveToTop",
+          "when": "false"
+        },
+        {
+          "command": "favorites.moveUp",
+          "when": "false"
+        },
+        {
+          "command": "favorites.moveDown",
+          "when": "false"
+        },
+        {
+          "command": "favorites.moveToBottom",
+          "when": "false"
+        }
       ]
     },
     "commands": [
