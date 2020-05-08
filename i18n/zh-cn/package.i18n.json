@@ -7,5 +7,6 @@
   "command.favorites.movetobottom": "下移至底",
   "command.favorites.sort": "切换排序",
   "command.favorites.revealInFinder": "从系统中打开",
+  "command.favorites.revealInSiderbar": "从侧边栏打开",
   "view.favorites.title": "收藏"
 }
