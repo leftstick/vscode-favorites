@@ -99,6 +99,11 @@
           "group": "navigation"
         },
         {
+          "command": "favorites.revealInSiderbar",
+          "when": "view == favorites && viewItem == resource",
+          "group": "navigation"
+        },
+        {
           "command": "favorites.deleteFavorite",
           "when": "view == favorites && viewItem == resource",
           "group": "operation"
@@ -161,6 +166,10 @@
       {
         "command": "favorites.revealInFinder",
         "title": "%command.favorites.revealInFinder%"
+      },
+      {
+        "command": "favorites.revealInSiderbar",
+        "title": "%command.favorites.revealInSiderbar%"
       }
     ]
   },

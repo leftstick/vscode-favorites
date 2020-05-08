@@ -7,5 +7,6 @@
   "command.favorites.movetobottom": "Move to Bottom",
   "command.favorites.sort": "Toggle sort",
   "command.favorites.revealInFinder": "Reveal In Finder",
+  "command.favorites.revealInSiderbar": "Open to the Side",
   "view.favorites.title": "Favorites"
 }
