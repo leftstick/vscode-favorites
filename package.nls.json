@@ -6,7 +6,9 @@
   "command.favorites.movetotop": "Move to Top",
   "command.favorites.movetobottom": "Move to Bottom",
   "command.favorites.sort": "Toggle Sort",
-  "command.favorites.revealInFinder": "Reveal in Finder",
+  "command.favorites.revealInOS.mac": "Reveal in Finder",
+  "command.favorites.revealInOS.windows": "Reveal in File Explorer",
+  "command.favorites.revealInOS.other": "Open Containing Folder",
   "command.favorites.revealInSiderbar": "Open to the Side",
   "view.favorites.title": "Favorites"
 }
