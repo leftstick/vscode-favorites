@@ -94,8 +94,18 @@
       ],
       "view/item/context": [
         {
-          "command": "favorites.revealInFinder",
-          "when": "view == favorites && viewItem == resource",
+          "command": "favorites.revealInOS.mac",
+          "when": "isMac && view == favorites && viewItem == resource",
+          "group": "navigation"
+        },
+        {
+          "command": "favorites.revealInOS.windows",
+          "when": "isWindows && view == favorites && viewItem == resource",
+          "group": "navigation"
+        },
+        {
+          "command": "favorites.revealInOS.other",
+          "when": "!isMac && !isWindows && view == favorites && viewItem == resource",
           "group": "navigation"
         },
         {
@@ -135,7 +145,15 @@
           "when": "false"
         },
         {
-          "command": "favorites.revealInFinder",
+          "command": "favorites.revealInOS.mac",
+          "when": "false"
+        },
+        {
+          "command": "favorites.revealInOS.windows",
+          "when": "false"
+        },
+        {
+          "command": "favorites.revealInOS.other",
           "when": "false"
         },
         {
@@ -190,8 +208,16 @@
         "title": "%command.favorites.movetobottom%"
       },
       {
-        "command": "favorites.revealInFinder",
-        "title": "%command.favorites.revealInFinder%"
+        "command": "favorites.revealInOS.mac",
+        "title": "%command.favorites.revealInOS.mac%"
+      },
+      {
+        "command": "favorites.revealInOS.windows",
+        "title": "%command.favorites.revealInOS.windows%"
+      },
+      {
+        "command": "favorites.revealInOS.other",
+        "title": "%command.favorites.revealInOS.other%"
       },
       {
         "command": "favorites.revealInSiderbar",

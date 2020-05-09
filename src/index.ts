@@ -12,7 +12,9 @@ import {
   moveToTop,
   moveToBottom,
   toggleSort,
-  revealInFinder,
+  revealInOS_mac,
+  revealInOS_windows,
+  revealInOS_other,
   revealInSiderbar,
 } from './command'
 
@@ -41,7 +43,9 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(addToFavorites())
   context.subscriptions.push(deleteFavorite())
-  context.subscriptions.push(revealInFinder())
+  context.subscriptions.push(revealInOS_mac())
+  context.subscriptions.push(revealInOS_windows())
+  context.subscriptions.push(revealInOS_other())
   context.subscriptions.push(revealInSiderbar())
   context.subscriptions.push(moveUp(favoritesProvider))
   context.subscriptions.push(moveDown(favoritesProvider))
@@ -51,4 +55,4 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
