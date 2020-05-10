@@ -6,9 +6,9 @@
   "command.favorites.movetotop": "上移至顶",
   "command.favorites.movetobottom": "下移至底",
   "command.favorites.sort": "切换排序",
-  "command.favorites.revealInOS.mac": "从系统中打开",
-  "command.favorites.revealInOS.windows": "从系统中打开",
-  "command.favorites.revealInOS.other": "从系统中打开",
+  "command.favorites.revealInOS.mac": "在 finder 中打开",
+  "command.favorites.revealInOS.windows": "在资源管理器中打开",
+  "command.favorites.revealInOS.other": "打开所在地址",
   "command.favorites.revealInSiderbar": "从侧边栏打开",
   "view.favorites.title": "收藏"
 }
