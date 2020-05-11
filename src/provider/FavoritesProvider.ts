@@ -169,6 +169,11 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
   private data2Resource(data: Array<Item>, contextValue: string): Array<Resource> {
     const enablePreview = <boolean>vscode.workspace.getConfiguration('workbench.editor').get('enablePreview')
 
+    // contextValue set on Resource gets a 'uri.' prefix if the favorite is specified as a uri,
+    //   and a '.dir' suffix if it represents a directory rather than a file.
+    // The when-clauses on our contributions to the 'view/item/context' menu use these modifiers
+    //   to be smarter about which commands to offer.
+
     return data.map((i) => {
       if (!i.uri) {
         let uri = vscode.Uri.parse(`file://${pathResolve(i.filePath)}`)
@@ -180,7 +185,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
             path.basename(i.filePath),
             vscode.TreeItemCollapsibleState.Collapsed,
             i.filePath,
-            contextValue,
+            contextValue + '.dir',
             undefined,
             uri
           )
@@ -205,7 +210,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
             path.basename(i.filePath),
             vscode.TreeItemCollapsibleState.Collapsed,
             i.filePath,
-            contextValue,
+            'uri.' + contextValue + '.dir',
             undefined,
             i.uri
           )
@@ -214,7 +219,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
           path.basename(i.filePath),
           vscode.TreeItemCollapsibleState.None,
           i.filePath,
-          contextValue,
+          'uri.' + contextValue,
           {
             command: 'vscode.open',
             title: '',

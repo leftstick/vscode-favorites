@@ -95,47 +95,47 @@
       "view/item/context": [
         {
           "command": "favorites.revealInOS.mac",
-          "when": "isMac && view == favorites && viewItem == resource",
+          "when": "isMac && view == favorites && viewItem =~ /^resource/",
           "group": "navigation"
         },
         {
           "command": "favorites.revealInOS.windows",
-          "when": "isWindows && view == favorites && viewItem == resource",
+          "when": "isWindows && view == favorites && viewItem =~ /^resource/",
           "group": "navigation"
         },
         {
           "command": "favorites.revealInOS.other",
-          "when": "!isMac && !isWindows && view == favorites && viewItem == resource",
+          "when": "!isMac && !isWindows && view == favorites && viewItem =~ /^resource/",
           "group": "navigation"
         },
         {
           "command": "favorites.revealInSiderbar",
-          "when": "view == favorites && viewItem == resource",
+          "when": "view == favorites && viewItem =~ /^resource(Child)?$|^uri\\.resource(Child)?$/",
           "group": "navigation"
         },
         {
           "command": "favorites.deleteFavorite",
-          "when": "view == favorites && viewItem == resource",
+          "when": "view == favorites && viewItem =~ /resource(\\.dir)?$/",
           "group": "operation"
         },
         {
           "command": "favorites.moveToTop",
-          "when": "view == favorites && viewItem == resource",
+          "when": "view == favorites && viewItem =~ /resource(\\.dir)?$/",
           "group": "sort@1"
         },
         {
           "command": "favorites.moveUp",
-          "when": "view == favorites && viewItem == resource",
+          "when": "view == favorites && viewItem =~ /resource(\\.dir)?$/",
           "group": "sort@2"
         },
         {
           "command": "favorites.moveDown",
-          "when": "view == favorites && viewItem == resource",
+          "when": "view == favorites && viewItem =~ /resource(\\.dir)?$/",
           "group": "sort@3"
         },
         {
           "command": "favorites.moveToBottom",
-          "when": "view == favorites && viewItem == resource",
+          "when": "view == favorites && viewItem =~ /resource(\\.dir)?$/",
           "group": "sort@4"
         }
       ],
