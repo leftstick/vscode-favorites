@@ -1,11 +1,14 @@
 {
   "command.favorites.addtofavorites": "Add to Favorites",
-  "command.favorites.deletefavorite": "Delete favorite",
+  "command.favorites.deletefavorite": "Remove from Favorites",
   "command.favorites.moveup": "Move Up",
   "command.favorites.movedown": "Move Down",
   "command.favorites.movetotop": "Move to Top",
   "command.favorites.movetobottom": "Move to Bottom",
-  "command.favorites.sort": "Toggle sort",
-  "command.favorites.revealInFinder": "Reveal In Finder",
+  "command.favorites.sort": "Toggle Sort",
+  "command.favorites.revealInOS.mac": "Reveal in Finder",
+  "command.favorites.revealInOS.windows": "Reveal in File Explorer",
+  "command.favorites.revealInOS.other": "Open Containing Folder",
+  "command.favorites.revealInSiderbar": "Open to the Side",
   "view.favorites.title": "Favorites"
 }
