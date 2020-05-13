@@ -2,7 +2,7 @@
   "name": "vscode-favorites",
   "displayName": "favorites",
   "description": "An extension helps developer marking resources as favorite. Therefor, those resources can be easily found.",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "publisher": "howardzuo",
   "engines": {
     "vscode": "^1.45.0"
@@ -12,7 +12,7 @@
     "postinstall": "node ./node_modules/vscode/bin/install",
     "build": "gulp build",
     "pub": "gulp publish",
-    "pack": "gulp package"
+    "pk": "gulp package"
   },
   "categories": [
     "Other"

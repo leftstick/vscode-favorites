@@ -35,9 +35,16 @@ ext install favorites
 
 ## Change Log
 
+### 2020-05-13
+
+1. support remote resources (by [@gjsjohnmurray](https://github.com/gjsjohnmurray))
+2. commands description improvement (by [@gjsjohnmurray](https://github.com/gjsjohnmurray))
+3. commands that should not be used in cmd palette is hidden from palette now (by [@gjsjohnmurray](https://github.com/gjsjohnmurray))
+4. "Reveal In Finder" improvement (by [@gjsjohnmurray](https://github.com/gjsjohnmurray))
+
 ### 2020-04-15
 
-1. support `Reveal In Finder`
+1. support `Reveal In Finder` (by [@geforcesong](https://github.com/geforcesong)
 
 ### 2018-03-22
 
