@@ -12,6 +12,9 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
   private _onDidChangeTreeData = new vscode.EventEmitter<Resource | void>()
   readonly onDidChangeTreeData: vscode.Event<Resource | void> = this._onDidChangeTreeData.event
 
+  // Use for detecting doubleclick
+  public lastOpened: { uri: vscode.Uri, date: Date }
+
   refresh(): void {
     this._onDidChangeTreeData.fire()
   }
@@ -197,9 +200,9 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
           i.filePath,
           contextValue,
           {
-            command: 'vscode.open',
+            command: 'favorites.open',
             title: '',
-            arguments: [uri, { preview: enablePreview }],
+            arguments: [uri]
           },
           uri
         )
@@ -221,9 +224,9 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
           i.filePath,
           'uri.' + contextValue,
           {
-            command: 'vscode.open',
+            command: 'favorites.open',
             title: '',
-            arguments: [i.uri, { preview: enablePreview }],
+            arguments: [i.uri]
           },
           i.uri
         )
