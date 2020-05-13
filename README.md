@@ -5,21 +5,23 @@
 ![][rate-url]
 ![][license-url]
 
-An extension helps developer marking resources as favorite. Therefor, those resources can be easily found.
+An extension that lets the developer mark resources (files or folders) as favorites, so they can be easily accessed.
 
 ![](https://raw.githubusercontent.com/leftstick/vscode-favorites/master/images/preview.gif)
 
 ## Install
 
-Launch VS Code Quick Open (`cmd`/`ctrl` + `p`), paste the following command, and press enter.
+Launch VS Code Quick Open (`cmd`/`ctrl` + `p`), paste the following command, and press Enter.
 
 ```
-ext install favorites
+ext install howardzuo.vscode-favorites
 ```
 
 ## Usage
 
-`vscode-favorites` save your favorite resource in workspace `settings.json`, and show them in a separate view
+An __Add to Favorites__ command in Explorer's context menu saves links to your favorite files or folders into your _*`XYZ`*_`.code-workspace` file if you are using one, else into the `.vscode/settings.json` file of your root folder.
+
+Your favorites are listed in a separate view and can be quickly accessed from there.
 
 ### Configuration
 
@@ -31,53 +33,11 @@ ext install favorites
 }
 ```
 
-> You don't need handle this config manually, but with context menu instead.
+> You normally don't need to modify this config manually. Use  context menus instead.
 
-## Change Log
+## Changelog
 
-### 2020-05-13
-
-1. support remote resources (by [@gjsjohnmurray](https://github.com/gjsjohnmurray))
-2. commands description improvement (by [@gjsjohnmurray](https://github.com/gjsjohnmurray))
-3. commands that should not be used in cmd palette is hidden from palette now (by [@gjsjohnmurray](https://github.com/gjsjohnmurray))
-4. "Reveal In Finder" improvement (by [@gjsjohnmurray](https://github.com/gjsjohnmurray))
-
-### 2020-04-15
-
-1. support `Reveal In Finder` (by [@geforcesong](https://github.com/geforcesong)
-
-### 2018-03-22
-
-1.  enable add/delete func for activeEditor. Which means you can now add/delete assets from an active editor
-2.  enter into ASC mode while click `toggleSort` button in MANUAL mode
-3.  sort descendant assets in ASC mode while in MANUAL mode
-
-### 2018-03-19
-
-1.  add sort button at navigation bar
-2.  refactor sort func to fix [sort issue](https://github.com/leftstick/vscode-favorites/issues/3#issuecomment-373995913)
-
-### 2018-03-17
-
-1.  sort favorites for directories and files separately
-2.  add tooltip
-
-### 2018-02-23
-
-1.  add file icon support
-
-### 2018-01-29
-
-1.  add new configuration `saveSeparated`
-
-### 2017-07-24
-
-1.  arrange menu items in natural order
-
-### 2017-06-30
-
-1.  add sorting support
-2.  add `MANUAL` sorting support
+[Changelog on Marketplace](https://marketplace.visualstudio.com/items/howardzuo.vscode-favorites/changelog)
 
 ## LICENSE
 
