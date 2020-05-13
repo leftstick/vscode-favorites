@@ -87,6 +87,11 @@
       ],
       "view/title": [
         {
+          "command": "favorites.nav.refresh",
+          "when": "view == favorites",
+          "group": "navigation"
+        },
+        {
           "command": "favorites.nav.sort",
           "when": "view == favorites",
           "group": "navigation"
@@ -141,6 +146,10 @@
       ],
       "commandPalette": [
         {
+          "command": "favorites.nav.refresh",
+          "when": "false"
+        },
+        {
           "command": "favorites.nav.sort",
           "when": "false"
         },
@@ -175,6 +184,11 @@
       ]
     },
     "commands": [
+      {
+        "command": "favorites.nav.refresh",
+        "title": "%command.favorites.refresh%",
+        "icon": "$(refresh)"
+      },
       {
         "command": "favorites.nav.sort",
         "title": "%command.favorites.sort%",
