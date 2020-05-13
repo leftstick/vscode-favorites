@@ -6,26 +6,45 @@ import { pathResolve } from '../helper/util'
 
 export function deleteFavorite() {
   return vscode.commands.registerCommand('favorites.deleteFavorite', (value?: Resource | vscode.Uri) => {
-    if (!value && !vscode.window.activeTextEditor) {
-      return vscode.window.showWarningMessage('You have to choose a resource first')
+    if (!value) {
+      if (!vscode.window.activeTextEditor) {
+        return vscode.window.showWarningMessage('You have to choose a resource first')
+      }
+      value = vscode.window.activeTextEditor.document.uri
     }
 
     const previousResources = configMgr.get('resources')
 
-    const fsPath = value
-      ? (<Resource>value).value || (<vscode.Uri>value).fsPath
-      : vscode.window.activeTextEditor.document.uri.fsPath
+    const uri = (<Resource>value).resourceUri || (<vscode.Uri>value)
 
-    configMgr
-      .save(
-        'resources',
-        previousResources.filter(r => {
-          if (r !== fsPath && pathResolve(r) !== fsPath) {
-            return true
-          }
-          return false
-        })
-      )
-      .catch(console.warn)
+    if (uri.scheme === 'file') {
+      const fsPath = (<Resource>value).value || (<vscode.Uri>value).fsPath
+
+      configMgr
+        .save(
+          'resources',
+          previousResources.filter(r => {
+            if (r !== fsPath && pathResolve(r) !== fsPath) {
+              return true
+            }
+            return false
+          })
+        )
+        .catch(console.warn)
+    }
+    else {
+      // Not a file, so remove the stringified uri
+      configMgr
+        .save(
+          'resources',
+          previousResources.filter(r => {
+            if (r !== uri.toString()) {
+              return true
+            }
+            return false
+          })
+        )
+        .catch(console.warn)
+    }
   })
 }

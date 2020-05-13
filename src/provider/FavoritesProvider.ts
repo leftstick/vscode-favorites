@@ -9,8 +9,8 @@ import { FileStat } from '../enum'
 import { Item } from '../model'
 
 export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
-  private _onDidChangeTreeData = new vscode.EventEmitter<Resource | undefined>()
-  readonly onDidChangeTreeData: vscode.Event<Resource | undefined> = this._onDidChangeTreeData.event
+  private _onDidChangeTreeData = new vscode.EventEmitter<Resource | void>()
+  readonly onDidChangeTreeData: vscode.Event<Resource | void> = this._onDidChangeTreeData.event
 
   refresh(): void {
     this._onDidChangeTreeData.fire()
@@ -41,6 +41,19 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
   private getChildrenResources(filePath: string): Thenable<Array<Resource>> {
     const sort = <string>vscode.workspace.getConfiguration('favorites').get('sortOrder')
 
+    if (filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:\/\//)) {
+      // filePath is a uri string
+      const uri = vscode.Uri.parse(filePath)
+      return vscode.workspace.fs.readDirectory(uri)
+        .then((entries) => this.sortResources(
+          entries.map((e) => vscode.Uri.joinPath(uri, e[0]).toString()),
+          sort === 'MANUAL' ? 'ASC' : sort
+        )
+        )
+        .then((items) => this.data2Resource(items, 'resourceChild'))
+    }
+
+    // Not a uri string
     return new Promise<Array<Resource>>((resolve, reject) => {
       fs.readdir(pathResolve(filePath), (err, files) => {
         if (err) {
@@ -95,64 +108,126 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
 
   private getResourceStat(filePath: string): Thenable<Item> {
     return new Promise((resolve) => {
-      fs.stat(pathResolve(filePath), (err, stat: fs.Stats) => {
-        if (err) {
+      if (filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:\/\//)) {
+        // filePath is a uri string
+        const uri = vscode.Uri.parse(filePath)
+        resolve(
+          vscode.workspace.fs.stat(uri)
+            .then((fileStat) => {
+              if (fileStat.type === vscode.FileType.File) {
+                return {
+                  filePath,
+                  stat: FileStat.FILE,
+                  uri
+                }
+              }
+              if (fileStat.type === vscode.FileType.Directory) {
+                return {
+                  filePath,
+                  stat: FileStat.DIRECTORY,
+                  uri
+                }
+              }
+              return {
+                filePath,
+                stat: FileStat.NEITHER,
+                uri
+              }
+            })
+        )
+      }
+      else {
+        // filePath is a file path
+        fs.stat(pathResolve(filePath), (err, stat: fs.Stats) => {
+          if (err) {
+            return resolve({
+              filePath,
+              stat: FileStat.NEITHER,
+            })
+          }
+          if (stat.isDirectory()) {
+            return resolve({
+              filePath,
+              stat: FileStat.DIRECTORY,
+            })
+          }
+          if (stat.isFile()) {
+            return resolve({
+              filePath,
+              stat: FileStat.FILE,
+            })
+          }
           return resolve({
             filePath,
             stat: FileStat.NEITHER,
           })
-        }
-        if (stat.isDirectory()) {
-          return resolve({
-            filePath,
-            stat: FileStat.DIRECTORY,
-          })
-        }
-        if (stat.isFile()) {
-          return resolve({
-            filePath,
-            stat: FileStat.FILE,
-          })
-        }
-        return resolve({
-          filePath,
-          stat: FileStat.NEITHER,
         })
-      })
+      }
     })
   }
 
   private data2Resource(data: Array<Item>, contextValue: string): Array<Resource> {
     const enablePreview = <boolean>vscode.workspace.getConfiguration('workbench.editor').get('enablePreview')
 
+    // contextValue set on Resource gets a 'uri.' prefix if the favorite is specified as a uri,
+    //   and a '.dir' suffix if it represents a directory rather than a file.
+    // The when-clauses on our contributions to the 'view/item/context' menu use these modifiers
+    //   to be smarter about which commands to offer.
+
     return data.map((i) => {
-      let uri = vscode.Uri.parse(`file://${pathResolve(i.filePath)}`)
-      if (os.platform().startsWith('win')) {
-        uri = vscode.Uri.parse(`file:///${pathResolve(i.filePath)}`.replace(/\\/g, '/'))
-      }
-      if (i.stat === FileStat.DIRECTORY) {
+      if (!i.uri) {
+        let uri = vscode.Uri.parse(`file://${pathResolve(i.filePath)}`)
+        if (os.platform().startsWith('win')) {
+          uri = vscode.Uri.parse(`file:///${pathResolve(i.filePath)}`.replace(/\\/g, '/'))
+        }
+        if (i.stat === FileStat.DIRECTORY) {
+          return new Resource(
+            path.basename(i.filePath),
+            vscode.TreeItemCollapsibleState.Collapsed,
+            i.filePath,
+            contextValue + '.dir',
+            undefined,
+            uri
+          )
+        }
+
         return new Resource(
           path.basename(i.filePath),
-          vscode.TreeItemCollapsibleState.Collapsed,
+          vscode.TreeItemCollapsibleState.None,
           i.filePath,
           contextValue,
-          undefined,
+          {
+            command: 'vscode.open',
+            title: '',
+            arguments: [uri, { preview: enablePreview }],
+          },
           uri
         )
       }
-
-      return new Resource(
-        path.basename(i.filePath),
-        vscode.TreeItemCollapsibleState.None,
-        i.filePath,
-        contextValue,
-        {
-          command: 'vscode.open',
-          title: '',
-          arguments: [uri, { preview: enablePreview }],
-        },
-        uri
-      )
+      else {
+        if (i.stat === FileStat.DIRECTORY) {
+          return new Resource(
+            path.basename(i.filePath),
+            vscode.TreeItemCollapsibleState.Collapsed,
+            i.filePath,
+            'uri.' + contextValue + '.dir',
+            undefined,
+            i.uri
+          )
+        }
+        return new Resource(
+          path.basename(i.filePath),
+          vscode.TreeItemCollapsibleState.None,
+          i.filePath,
+          'uri.' + contextValue,
+          {
+            command: 'vscode.open',
+            title: '',
+            arguments: [i.uri, { preview: enablePreview }],
+          },
+          i.uri
+        )
+      }
     })
   }
 }
@@ -170,7 +245,7 @@ export class Resource extends vscode.TreeItem {
   ) {
     super(label, collapsibleState)
 
-    this.resourceUri = vscode.Uri.file(value)
+    this.resourceUri = (uri) ? uri : vscode.Uri.file(value)
     this.tooltip = value
   }
 }
