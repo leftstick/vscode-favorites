@@ -11,6 +11,7 @@ import {
   moveDown,
   moveToTop,
   moveToBottom,
+  refresh,
   toggleSort,
   revealInOS_mac,
   revealInOS_windows,
@@ -51,6 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(moveDown(favoritesProvider))
   context.subscriptions.push(moveToTop(favoritesProvider))
   context.subscriptions.push(moveToBottom(favoritesProvider))
+  context.subscriptions.push(refresh(favoritesProvider))
   context.subscriptions.push(toggleSort(favoritesProvider))
 }
 
