@@ -1,4 +1,11 @@
 <!--Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.-->
+
+### 2020-05-14
+
+1. Support double click feature (by [@gjsjohnmurray](https://github.com/gjsjohnmurray))
+2. Support refresh feature (by [@gjsjohnmurray](https://github.com/gjsjohnmurray))
+3. Improve documentation (by [@gjsjohnmurray](https://github.com/gjsjohnmurray))
+
 ### 2020-05-13
 
 1. Support remote resources (by [@gjsjohnmurray](https://github.com/gjsjohnmurray))
