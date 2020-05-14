@@ -1,7 +1,7 @@
 {
   "name": "vscode-favorites",
   "displayName": "favorites",
-  "description": "An extension helps developer marking resources as favorite. Therefor, those resources can be easily found.",
+  "description": "Mark resources (files or folders, local and remote) as favorites, so they can be easily accessed.",
   "version": "1.7.0",
   "publisher": "howardzuo",
   "engines": {
@@ -36,12 +36,12 @@
   "contributes": {
     "configuration": {
       "type": "object",
-      "title": "Favorites configuration",
+      "title": "Favorites",
       "properties": {
         "favorites.resources": {
           "type": "array",
           "default": [],
-          "description": "Resources marked as favorite"
+          "description": "Resources marked as favorites"
         },
         "favorites.sortOrder": {
           "type": "string",
@@ -114,7 +114,12 @@
           "group": "navigation"
         },
         {
-          "command": "favorites.revealInSiderbar",
+          "command": "favorites.revealInSideBar",
+          "when": "view == favorites",
+          "group": "navigation"
+        },
+        {
+          "command": "favorites.openToSide",
           "when": "view == favorites && viewItem =~ /^resource(Child)?$|^uri\\.resource(Child)?$/",
           "group": "navigation"
         },
@@ -163,6 +168,14 @@
         },
         {
           "command": "favorites.revealInOS.other",
+          "when": "false"
+        },
+        {
+          "command": "favorites.revealInSideBar",
+          "when": "false"
+        },
+        {
+          "command": "favorites.openToSide",
           "when": "false"
         },
         {
@@ -234,8 +247,12 @@
         "title": "%command.favorites.revealInOS.other%"
       },
       {
-        "command": "favorites.revealInSiderbar",
-        "title": "%command.favorites.revealInSiderbar%"
+        "command": "favorites.revealInSideBar",
+        "title": "%command.favorites.revealInSideBar%"
+      },
+      {
+        "command": "favorites.openToSide",
+        "title": "%command.favorites.openToSide%"
       }
     ]
   },
