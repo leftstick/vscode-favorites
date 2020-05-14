@@ -34,7 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   const favoritesProvider = new FavoritesProvider()
 
-  vscode.window.registerTreeDataProvider('favorites', favoritesProvider)
+  vscode.window.createTreeView('favorites', { treeDataProvider: favoritesProvider, showCollapseAll: true })
 
   vscode.workspace.onDidChangeConfiguration(
     () => {
