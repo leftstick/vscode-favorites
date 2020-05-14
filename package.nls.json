@@ -10,6 +10,7 @@
   "command.favorites.revealInOS.mac": "Reveal in Finder",
   "command.favorites.revealInOS.windows": "Reveal in File Explorer",
   "command.favorites.revealInOS.other": "Open Containing Folder",
-  "command.favorites.revealInSiderbar": "Open to the Side",
+  "command.favorites.revealInSideBar": "Reveal in Side Bar",
+  "command.favorites.openToSide": "Open to the Side",
   "view.favorites.title": "Favorites"
 }

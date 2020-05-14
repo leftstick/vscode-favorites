@@ -16,7 +16,8 @@ import {
   revealInOS_mac,
   revealInOS_windows,
   revealInOS_other,
-  revealInSiderbar,
+  revealInSideBar,
+  openToSide,
   open,
 } from './command'
 
@@ -48,7 +49,8 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(revealInOS_mac())
   context.subscriptions.push(revealInOS_windows())
   context.subscriptions.push(revealInOS_other())
-  context.subscriptions.push(revealInSiderbar())
+  context.subscriptions.push(revealInSideBar())
+  context.subscriptions.push(openToSide())
   context.subscriptions.push(open(favoritesProvider))
   context.subscriptions.push(moveUp(favoritesProvider))
   context.subscriptions.push(moveDown(favoritesProvider))
