@@ -5,6 +5,7 @@
 1. Support double click feature (by [@gjsjohnmurray](https://github.com/gjsjohnmurray))
 2. Support refresh feature (by [@gjsjohnmurray](https://github.com/gjsjohnmurray))
 3. Improve documentation (by [@gjsjohnmurray](https://github.com/gjsjohnmurray))
+4. Support "Reveal in Side Bar" (by [@gjsjohnmurray](https://github.com/gjsjohnmurray))
 
 ### 2020-05-13
 
