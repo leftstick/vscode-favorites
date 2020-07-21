@@ -257,7 +257,7 @@
     ]
   },
   "devDependencies": {
-    "@types/node": "^13.11.1",
+    "@types/node": "^14.0.24",
     "del": "^5.1.0",
     "event-stream": "^4.0.1",
     "gulp": "^4.0.2",
@@ -265,10 +265,10 @@
     "gulp-sourcemaps": "^2.6.5",
     "gulp-typescript": "^6.0.0-alpha.1",
     "run-sequence": "^2.2.1",
-    "typescript": "^3.8.3",
-    "vsce": "^1.75.0",
-    "vscode": "^1.1.36",
-    "vscode-nls-dev": "^3.3.1"
+    "typescript": "^3.9.7",
+    "vsce": "^1.77.0",
+    "vscode": "^1.1.37",
+    "vscode-nls-dev": "^3.3.2"
   },
   "dependencies": {
     "nconf": "^0.10.0"
