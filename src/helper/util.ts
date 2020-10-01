@@ -9,8 +9,12 @@ export function isMultiRoots(): boolean {
   return vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 1
 }
 
+export function hasRoot(): boolean {
+  return vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
+}
+
 export function pathResolve(filePath: string) {
-  if (isMultiRoots()) {
+  if (isMultiRoots() || !hasRoot()) {
     return filePath
   }
   return path.resolve(vscode.workspace.workspaceFolders[0].uri.fsPath, filePath)
