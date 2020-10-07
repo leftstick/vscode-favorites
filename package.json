@@ -2,7 +2,7 @@
   "name": "vscode-favorites",
   "displayName": "favorites",
   "description": "Mark resources (files or folders, local and remote) as favorites, so they can be easily accessed.",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "publisher": "howardzuo",
   "engines": {
     "vscode": "^1.45.0"
