@@ -64,7 +64,8 @@
       "explorer": [
         {
           "id": "favorites",
-          "name": "%view.favorites.title%"
+          "name": "%view.favorites.title%",
+          "icon": "$(heart)"
         }
       ]
     },
