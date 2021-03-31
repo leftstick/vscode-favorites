@@ -28,6 +28,8 @@ export function activate(context: vscode.ExtensionContext) {
   // This line of code will only be executed once when your extension is activated
   console.log('Congratulations, your extension "favorites" is now active!')
 
+  vscode.commands.executeCommand('setContext', 'ext:allFavoriteViews', ['favorites', 'favorites-full-view'])
+
   configMgr.onConfigChange(() => {
     favoritesProvider.refresh()
   })

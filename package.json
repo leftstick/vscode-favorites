@@ -2,7 +2,7 @@
   "name": "vscode-favorites",
   "displayName": "favorites",
   "description": "Mark resources (files or folders, local and remote) as favorites, so they can be easily accessed.",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "publisher": "howardzuo",
   "engines": {
     "vscode": "^1.45.0"
@@ -29,7 +29,8 @@
   },
   "activationEvents": [
     "onCommand:favorites.addToFavorites",
-    "onView:favorites"
+    "onView:favorites",
+    "onView:favorites-full-view"
   ],
   "license": "GPL-3.0",
   "main": "./out/",
@@ -103,64 +104,64 @@
       "view/title": [
         {
           "command": "favorites.nav.refresh",
-          "when": "view == favorites",
+          "when": "view in ext:allFavoriteViews",
           "group": "navigation"
         },
         {
           "command": "favorites.nav.sort",
-          "when": "view == favorites",
+          "when": "view in ext:allFavoriteViews",
           "group": "navigation"
         }
       ],
       "view/item/context": [
         {
           "command": "favorites.revealInOS.mac",
-          "when": "isMac && view == favorites && viewItem =~ /^resource/",
+          "when": "isMac && view in ext:allFavoriteViews && viewItem =~ /^resource/",
           "group": "navigation"
         },
         {
           "command": "favorites.revealInOS.windows",
-          "when": "isWindows && view == favorites && viewItem =~ /^resource/",
+          "when": "isWindows && view in ext:allFavoriteViews && viewItem =~ /^resource/",
           "group": "navigation"
         },
         {
           "command": "favorites.revealInOS.other",
-          "when": "!isMac && !isWindows && view == favorites && viewItem =~ /^resource/",
+          "when": "!isMac && !isWindows && view in ext:allFavoriteViews && viewItem =~ /^resource/",
           "group": "navigation"
         },
         {
           "command": "favorites.revealInSideBar",
-          "when": "view == favorites",
+          "when": "view in ext:allFavoriteViews",
           "group": "navigation"
         },
         {
           "command": "favorites.openToSide",
-          "when": "view == favorites && viewItem =~ /^resource(Child)?$|^uri\\.resource(Child)?$/",
+          "when": "view in ext:allFavoriteViews && viewItem =~ /^resource(Child)?$|^uri\\.resource(Child)?$/",
           "group": "navigation"
         },
         {
           "command": "favorites.deleteFavorite",
-          "when": "view == favorites && viewItem =~ /resource(\\.dir)?$/",
+          "when": "view in ext:allFavoriteViews && viewItem =~ /resource(\\.dir)?$/",
           "group": "operation"
         },
         {
           "command": "favorites.moveToTop",
-          "when": "view == favorites && viewItem =~ /resource(\\.dir)?$/",
+          "when": "view in ext:allFavoriteViews && viewItem =~ /resource(\\.dir)?$/",
           "group": "sort@1"
         },
         {
           "command": "favorites.moveUp",
-          "when": "view == favorites && viewItem =~ /resource(\\.dir)?$/",
+          "when": "view in ext:allFavoriteViews && viewItem =~ /resource(\\.dir)?$/",
           "group": "sort@2"
         },
         {
           "command": "favorites.moveDown",
-          "when": "view == favorites && viewItem =~ /resource(\\.dir)?$/",
+          "when": "view in ext:allFavoriteViews && viewItem =~ /resource(\\.dir)?$/",
           "group": "sort@3"
         },
         {
           "command": "favorites.moveToBottom",
-          "when": "view == favorites && viewItem =~ /resource(\\.dir)?$/",
+          "when": "view in ext:allFavoriteViews && viewItem =~ /resource(\\.dir)?$/",
           "group": "sort@4"
         }
       ],
