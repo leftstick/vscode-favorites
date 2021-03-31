@@ -2,7 +2,7 @@
   "name": "vscode-favorites",
   "displayName": "favorites",
   "description": "Mark resources (files or folders, local and remote) as favorites, so they can be easily accessed.",
-  "version": "1.8.3",
+  "version": "1.9.0",
   "publisher": "howardzuo",
   "engines": {
     "vscode": "^1.45.0"
@@ -60,12 +60,26 @@
         }
       }
     },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "favorites-explorer",
+          "title": "%view.favorites.title%",
+          "icon": "$(heart)"
+        }
+      ]
+    },
     "views": {
+      "favorites-explorer": [
+        {
+          "id": "favorites-full-view",
+          "name": "%view.favorites.title%"
+        }
+      ],
       "explorer": [
         {
           "id": "favorites",
-          "name": "%view.favorites.title%",
-          "icon": "$(heart)"
+          "name": "%view.favorites.title%"
         }
       ]
     },

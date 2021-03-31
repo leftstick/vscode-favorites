@@ -35,6 +35,10 @@ export function activate(context: vscode.ExtensionContext) {
   const favoritesProvider = new FavoritesProvider()
 
   vscode.window.createTreeView('favorites', { treeDataProvider: favoritesProvider, showCollapseAll: true })
+  vscode.window.createTreeView('favorites-full-view', {
+    treeDataProvider: favoritesProvider,
+    showCollapseAll: true,
+  })
 
   vscode.workspace.onDidChangeConfiguration(
     () => {
@@ -61,4 +65,4 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() { }
+export function deactivate() {}
