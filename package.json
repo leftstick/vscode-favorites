@@ -126,6 +126,11 @@
           "command": "favorites.group.changeGroup",
           "when": "view in ext:allFavoriteViews",
           "group": "navigation"
+        },
+        {
+          "command": "favorites.group.newGroup",
+          "when": "view in ext:allFavoriteViews",
+          "group": "navigation"
         }
       ],
       "view/item/context": [
@@ -245,6 +250,11 @@
         "command": "favorites.group.changeGroup",
         "title": "%command.favorites.changeGroup%",
         "icon": "$(group-by-ref-type)"
+      },
+      {
+        "command": "favorites.group.newGroup",
+        "title": "%command.favorites.newGroup%",
+        "icon": "$(terminal-new)"
       },
       {
         "command": "favorites.addToFavorites",
