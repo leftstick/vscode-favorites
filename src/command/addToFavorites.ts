@@ -25,8 +25,8 @@ export function addToFavorites() {
 
     configMgr.save('resources', previousResources.concat([{filePath:newResource,group:'Default'}] as Array<ItemInSettingsJson>)).catch(console.warn)
 
-    if(configMgr.get('currentGroup')==undefined){
-      configMgr.save('currentGroup', 'Default').catch(console.warn)
+    if(configMgr.get('groups')==undefined||configMgr.get('groups').length==0){
+      configMgr.save('groups', ['Default']).catch(console.warn)
     }
   })
 }

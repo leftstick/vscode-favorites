@@ -13,6 +13,7 @@ import {
   moveToBottom,
   refresh,
   toggleSort,
+  changeGroup,
   revealInOS_mac,
   revealInOS_windows,
   revealInOS_other,
@@ -69,6 +70,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(moveToBottom(favoritesProvider))
   context.subscriptions.push(refresh(favoritesProvider))
   context.subscriptions.push(toggleSort(favoritesProvider))
+  context.subscriptions.push(changeGroup(favoritesProvider))
 }
 
 // this method is called when your extension is deactivated

@@ -12,5 +12,6 @@
   "command.favorites.revealInOS.other": "Open Containing Folder",
   "command.favorites.revealInSideBar": "Reveal in Side Bar",
   "command.favorites.openToSide": "Open to the Side",
+  "command.favorites.changeGroup": "Change current group",
   "view.favorites.title": "Favorites"
 }
