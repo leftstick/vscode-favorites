@@ -1,6 +1,7 @@
 import * as vscode from 'vscode'
 import { isMultiRoots, getSingleRootPath } from '../helper/util'
 import configMgr from '../helper/configMgr'
+import { ItemInSettingsJson } from '../model'
 
 export function addToFavorites() {
   return vscode.commands.registerCommand('favorites.addToFavorites', (fileUri?: vscode.Uri) => {
@@ -18,10 +19,10 @@ export function addToFavorites() {
     // Store the stringified uri for any resource that isn't a file
     const newResource = (fileUri.scheme !== 'file') ? fileUri.toString() : (isMultiRoots() ? fileName : fileName.substr(getSingleRootPath().length + 1))
 
-    if (previousResources.some(r => r === newResource)) {
+    if (previousResources.some(r => r.filePath === newResource)) {
       return
     }
 
-    configMgr.save('resources', previousResources.concat([newResource])).catch(console.warn)
+    configMgr.save('resources', previousResources.concat([{filePath:newResource,group:'null'}] as Array<ItemInSettingsJson>)).catch(console.warn)
   })
 }

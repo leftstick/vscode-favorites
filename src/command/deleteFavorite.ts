@@ -24,7 +24,7 @@ export function deleteFavorite() {
         .save(
           'resources',
           previousResources.filter(r => {
-            if (r !== fsPath && pathResolve(r) !== fsPath) {
+            if (r.filePath !== fsPath && pathResolve(r.filePath) !== fsPath) {
               return true
             }
             return false
@@ -38,7 +38,7 @@ export function deleteFavorite() {
         .save(
           'resources',
           previousResources.filter(r => {
-            if (r !== uri.toString()) {
+            if (r.filePath !== uri.toString()) {
               return true
             }
             return false
