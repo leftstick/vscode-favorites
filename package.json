@@ -61,7 +61,9 @@
         },
         "favorites.groups": {
           "type": "array",
-          "default": [],
+          "default": [
+            "Default"
+          ],
           "description": "The names of all groups in the workspace"
         },
         "favorites.saveSeparated": {
