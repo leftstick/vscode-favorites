@@ -54,6 +54,11 @@
           "default": "ASC",
           "description": "Specify an order for all favorites"
         },
+        "favorites.currentGroup": {
+          "type": "string",
+          "default": "Default",
+          "description": "The name of current group"
+        },
         "favorites.saveSeparated": {
           "type": "boolean",
           "default": false,

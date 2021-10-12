@@ -14,7 +14,7 @@ export function addToFavorites() {
 
     const fileName = fileUri.fsPath
 
-    const previousResources = configMgr.get('resources')
+    const previousResources = configMgr.get('resources') as Array<ItemInSettingsJson>
 
     // Store the stringified uri for any resource that isn't a file
     const newResource = (fileUri.scheme !== 'file') ? fileUri.toString() : (isMultiRoots() ? fileName : fileName.substr(getSingleRootPath().length + 1))
@@ -23,6 +23,10 @@ export function addToFavorites() {
       return
     }
 
-    configMgr.save('resources', previousResources.concat([{filePath:newResource,group:'null'}] as Array<ItemInSettingsJson>)).catch(console.warn)
+    configMgr.save('resources', previousResources.concat([{filePath:newResource,group:'Default'}] as Array<ItemInSettingsJson>)).catch(console.warn)
+
+    if(configMgr.get('currentGroup')==undefined){
+      configMgr.save('currentGroup', 'Default').catch(console.warn)
+    }
   })
 }
