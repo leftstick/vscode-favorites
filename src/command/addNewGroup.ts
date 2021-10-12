@@ -16,7 +16,7 @@ export function addNewGroup(favoritesProvider: FavoritesProvider) {
           vscode.window.showInputBox({title:'Input a name for new group'}).then((input)=>{
             addNewGroupInConfig(input, previousGroups)
           })
-        }else{
+        }else if(label=='Create group with current branch name'){
           addNewGroupInConfig(branchName, previousGroups)
         }
       })

@@ -13,5 +13,6 @@
   "command.favorites.revealInSideBar": "Reveal in Side Bar",
   "command.favorites.openToSide": "Open to the Side",
   "command.favorites.changeGroup": "Change current group",
+  "command.favorites.newGroup": "Create new group",
   "view.favorites.title": "Favorites"
 }
