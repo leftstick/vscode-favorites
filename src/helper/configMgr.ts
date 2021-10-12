@@ -3,16 +3,17 @@ import * as nconf from 'nconf'
 import * as path from 'path'
 
 import { isMultiRoots, getSingleRootPath } from './util'
+import { ItemInSettingsJson } from '../model'
 
 class ConfigMgr {
   eventEmitter: vscode.EventEmitter<void> = new vscode.EventEmitter<void>()
 
-  get(key): Array<string> {
+  get(key): Array<ItemInSettingsJson> {
     const config = vscode.workspace.getConfiguration('favorites')
     const useSeparate = <boolean>config.get('saveSeparated')
 
     if (isMultiRoots() || !useSeparate) {
-      return <Array<string>>config.get(key)
+      return <Array<ItemInSettingsJson>>config.get(key)
     }
 
     nconf.file({ file: path.resolve(getSingleRootPath(), '.vscfavoriterc') })

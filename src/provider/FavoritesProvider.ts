@@ -6,7 +6,7 @@ import * as os from 'os'
 import { isMultiRoots, pathResolve } from '../helper/util'
 import configMgr from '../helper/configMgr'
 import { FileStat } from '../enum'
-import { Item } from '../model'
+import { Item, ItemInSettingsJson } from '../model'
 
 export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
   private _onDidChangeTreeData = new vscode.EventEmitter<Resource | void>()
@@ -37,19 +37,19 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
           .then((data: Array<Item>) => this.data2Resource(data, 'resource'))
       }
 
-      return this.getChildrenResources(element.value)
+      return this.getChildrenResources({filePath:element.value,group:''})
     })
   }
 
-  private getChildrenResources(filePath: string): Thenable<Array<Resource>> {
+  private getChildrenResources(item: ItemInSettingsJson): Thenable<Array<Resource>> {
     const sort = <string>vscode.workspace.getConfiguration('favorites').get('sortOrder')
 
-    if (filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:\/\//)) {
+    if (item.filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:\/\//)) {
       // filePath is a uri string
-      const uri = vscode.Uri.parse(filePath)
+      const uri = vscode.Uri.parse(item.filePath)
       return vscode.workspace.fs.readDirectory(uri)
         .then((entries) => this.sortResources(
-          entries.map((e) => vscode.Uri.joinPath(uri, e[0]).toString()),
+          entries.map((e) => ({filePath:vscode.Uri.joinPath(uri, e[0]).toString(),group:''})),
           sort === 'MANUAL' ? 'ASC' : sort
         )
         )
@@ -58,13 +58,13 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
 
     // Not a uri string
     return new Promise<Array<Resource>>((resolve, reject) => {
-      fs.readdir(pathResolve(filePath), (err, files) => {
+      fs.readdir(pathResolve(item.filePath), (err, files) => {
         if (err) {
           return resolve([])
         }
 
         this.sortResources(
-          files.map((f) => path.join(filePath, f)),
+          files.map((f) => ({filePath:path.join(item.filePath, f),group:''})),
           sort === 'MANUAL' ? 'ASC' : sort
         )
           .then((data) => this.data2Resource(data, 'resourceChild'))
@@ -73,7 +73,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
     })
   }
 
-  private getSortedFavoriteResources(): Thenable<Array<string>> {
+  private getSortedFavoriteResources(): Thenable<Array<ItemInSettingsJson>> {
     const resources = configMgr.get('resources')
     const sort = <string>vscode.workspace.getConfiguration('favorites').get('sortOrder')
 
@@ -81,10 +81,10 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
       return Promise.resolve(resources)
     }
 
-    return this.sortResources(resources, sort).then((res) => res.map((r) => r.filePath))
+    return this.sortResources(resources.map((item)=>item), sort).then((res) => res.map((r) => ({filePath:r.filePath,group:''})))
   }
 
-  private sortResources(resources: Array<string>, sort: string): Thenable<Array<Item>> {
+  private sortResources(resources: Array<ItemInSettingsJson>, sort: string): Thenable<Array<Item>> {
     return Promise.all(resources.map((r) => this.getResourceStat(r))).then((resourceStats) => {
       const isAsc = sort === 'ASC'
       resourceStats.sort(function (a, b) {
@@ -109,60 +109,67 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
     })
   }
 
-  private getResourceStat(filePath: string): Thenable<Item> {
+  private getResourceStat(item: ItemInSettingsJson): Thenable<Item> {
     return new Promise((resolve) => {
-      if (filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:\/\//)) {
+      if (item.filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:\/\//)) {
         // filePath is a uri string
-        const uri = vscode.Uri.parse(filePath)
+        const uri = vscode.Uri.parse(item.filePath)
         resolve(
           vscode.workspace.fs.stat(uri)
             .then((fileStat) => {
               if (fileStat.type === vscode.FileType.File) {
                 return {
-                  filePath,
+                  filePath:item.filePath,
                   stat: FileStat.FILE,
-                  uri
+                  uri,
+                  group:item.group
                 }
               }
               if (fileStat.type === vscode.FileType.Directory) {
                 return {
-                  filePath,
+                  filePath:item.filePath,
                   stat: FileStat.DIRECTORY,
-                  uri
+                  uri,
+                  group:item.group
                 }
               }
               return {
-                filePath,
+                filePath:item.filePath,
                 stat: FileStat.NEITHER,
-                uri
+                uri,
+                group:item.group
               }
             })
         )
       }
       else {
         // filePath is a file path
-        fs.stat(pathResolve(filePath), (err, stat: fs.Stats) => {
+        fs.stat(pathResolve(item.filePath), (err, stat: fs.Stats) => {
           if (err) {
             return resolve({
-              filePath,
+              filePath:item.filePath,
               stat: FileStat.NEITHER,
+              group:item.group
             })
           }
           if (stat.isDirectory()) {
             return resolve({
-              filePath,
+              filePath:item.filePath,
               stat: FileStat.DIRECTORY,
+              group:item.group
             })
           }
           if (stat.isFile()) {
             return resolve({
-              filePath,
+              filePath:item.filePath,
               stat: FileStat.FILE,
+              group:item.group
             })
           }
           return resolve({
-            filePath,
+            filePath:item.filePath,
             stat: FileStat.NEITHER,
+            group:item.group
           })
         })
       }
