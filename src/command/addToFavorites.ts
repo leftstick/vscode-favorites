@@ -17,17 +17,29 @@ export function addToFavorites() {
     const previousResources = configMgr.get('resources') as Array<ItemInSettingsJson>
 
     // Store the stringified uri for any resource that isn't a file
-    const newResource = (fileUri.scheme !== 'file') ? fileUri.toString() : (isMultiRoots() ? fileName : fileName.substr(getSingleRootPath().length + 1))
+    const newResource =
+      fileUri.scheme !== 'file'
+        ? fileUri.toString()
+        : isMultiRoots()
+        ? fileName
+        : fileName.substr(getSingleRootPath().length + 1)
 
-    if (previousResources.some(r => r.filePath === newResource)) {
+    if (previousResources.some((r) => r.filePath === newResource && r.group === currentGroup)) {
       return
     }
 
     const currentGroup = configMgr.get('currentGroup') as string
 
-    configMgr.save('resources', previousResources.concat([{filePath:newResource,group:currentGroup}] as Array<ItemInSettingsJson>)).catch(console.warn)
+    configMgr
+      .save(
+        'resources',
+        previousResources.concat([
+          { filePath: newResource, group: currentGroup },
+        ] as Array<ItemInSettingsJson>)
+      )
+      .catch(console.warn)
 
-    if(configMgr.get('groups')==undefined||configMgr.get('groups').length==0){
+    if (configMgr.get('groups') == undefined || configMgr.get('groups').length == 0) {
       configMgr.save('groups', ['Default']).catch(console.warn)
     }
   })
