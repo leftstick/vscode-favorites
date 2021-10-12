@@ -34,6 +34,9 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
           .then((data: Array<Item>) => {
             return data.filter((i) => i.stat !== FileStat.NEITHER)
           })
+          .then((data: Array<Item>) => {
+            return data.filter((i) => i.group === (configMgr.get('currentGroup') as string))
+          })
           .then((data: Array<Item>) => this.data2Resource(data, 'resource'))
       }
 
@@ -74,14 +77,14 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
   }
 
   private getSortedFavoriteResources(): Thenable<Array<ItemInSettingsJson>> {
-    const resources = configMgr.get('resources')
+    const resources = configMgr.get('resources') as Array<ItemInSettingsJson>
     const sort = <string>vscode.workspace.getConfiguration('favorites').get('sortOrder')
 
     if (sort === 'MANUAL') {
       return Promise.resolve(resources)
     }
 
-    return this.sortResources(resources.map((item)=>item), sort).then((res) => res.map((r) => ({filePath:r.filePath,group:''})))
+    return this.sortResources(resources.map((item)=>item), sort).then((res) => res.map((r) => ({filePath:r.filePath,group:r.group})))
   }
 
   private sortResources(resources: Array<ItemInSettingsJson>, sort: string): Thenable<Array<Item>> {

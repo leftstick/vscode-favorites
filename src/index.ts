@@ -37,13 +37,18 @@ export function activate(context: vscode.ExtensionContext) {
   const favoritesProvider = new FavoritesProvider()
 
   vscode.window.createTreeView('favorites', { treeDataProvider: favoritesProvider, showCollapseAll: true })
-  vscode.window.createTreeView('favorites-full-view', {
+  const tree = vscode.window.createTreeView('favorites-full-view', {
     treeDataProvider: favoritesProvider,
     showCollapseAll: true,
   })
 
+  const currentGroup = configMgr.get('currentGroup')
+  tree.message = `Current Group: ${currentGroup??'Default'}`
+
   vscode.workspace.onDidChangeConfiguration(
     () => {
+      const currentGroup = configMgr.get('currentGroup'??'Default')
+      tree.message = `Current Group: ${currentGroup}`
       favoritesProvider.refresh()
     },
     this,
