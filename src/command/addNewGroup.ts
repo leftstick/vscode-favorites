@@ -6,15 +6,20 @@ import configMgr from '../helper/configMgr'
 export function addNewGroup(favoritesProvider: FavoritesProvider) {
 
   return vscode.commands.registerCommand('favorites.group.newGroup', async function (value: Resource) {
-    const gitExtension = vscode.extensions.getExtension('vscode.git').exports.getAPI(1)
-    const branchName:string = gitExtension._model.repositories[0]._HEAD.name
+    const notUsingGit =  vscode.extensions.getExtension('vscode.git')?.exports?.getAPI(1)._model.repositories[0]==undefined
+    if(!notUsingGit){
+      var gitExtension = vscode.extensions.getExtension('vscode.git').exports.getAPI(1)
+      var branchName:string = gitExtension._model.repositories[0]._HEAD.name
+    }
     const previousGroups = configMgr.get('groups') as Array<string>
     vscode.window
-      .showQuickPick(['Input new group name', 'Create group with current branch name'])
+      .showQuickPick(['Input new group name'].concat(notUsingGit?[]:['Create group with current branch name']))
       .then((label) => {
         if (label == 'Input new group name') {
           vscode.window.showInputBox({title:'Input a name for new group'}).then((input)=>{
-            addNewGroupInConfig(input, previousGroups)
+            if(input){
+              addNewGroupInConfig(input, previousGroups)
+            }
           })
         }else if(label=='Create group with current branch name'){
           addNewGroupInConfig(branchName, previousGroups)
