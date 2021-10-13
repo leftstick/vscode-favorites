@@ -14,14 +14,14 @@ export function changeGroup(favoritesProvider: FavoritesProvider) {
     vscode.window
       .showQuickPick(
         doesCurrentBranchNameGroupExist && !isInCurrentBranchGroup
-          ? ['switch to current branch group'].concat(
+          ? ['Switch to current branch group'].concat(
               groups.filter((item) => item !== branchName && item !== currentGroup)
             )
           : groups.filter((item) => item !== branchName && item !== currentGroup),
         { title: 'Choose a group you want to switch to' }
       )
       .then((selectedCommand) => {
-        if (selectedCommand === 'switch to current branch group') {
+        if (selectedCommand === 'Switch to current branch group') {
           configMgr.save('currentGroup', branchName)
         } else if(selectedCommand!=undefined) {
           configMgr.save('currentGroup', selectedCommand)

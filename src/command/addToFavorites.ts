@@ -24,11 +24,10 @@ export function addToFavorites() {
         ? fileName
         : fileName.substr(getSingleRootPath().length + 1)
 
+    const currentGroup = configMgr.get('currentGroup') as string
     if (previousResources.some((r) => r.filePath === newResource && r.group === currentGroup)) {
       return
     }
-
-    const currentGroup = configMgr.get('currentGroup') as string
 
     configMgr
       .save(
