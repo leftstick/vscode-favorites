@@ -8,7 +8,7 @@ import { ItemInSettingsJson } from '../model'
 class ConfigMgr {
   eventEmitter: vscode.EventEmitter<void> = new vscode.EventEmitter<void>()
 
-  get(key): Array<ItemInSettingsJson>|string|Array<string> {
+  get(key): Array<ItemInSettingsJson|string>|string|Array<string> {
     const config = vscode.workspace.getConfiguration('favorites')
     const useSeparate = <boolean>config.get('saveSeparated')
 
