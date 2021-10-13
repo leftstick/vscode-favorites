@@ -5,15 +5,20 @@ import configMgr from '../helper/configMgr'
 
 export function changeGroup(favoritesProvider: FavoritesProvider) {
   return vscode.commands.registerCommand('favorites.group.changeGroup', async function (value: Resource) {
-    const gitExtension = vscode.extensions.getExtension('vscode.git').exports.getAPI(1)
-    const branchName: string = gitExtension._model.repositories[0]._HEAD.name
+    const notUsingGit =  vscode.extensions.getExtension('vscode.git')?.exports?.getAPI(1)._model.repositories[0]==undefined
+    if (!notUsingGit){
+      var gitExtension = vscode.extensions.getExtension('vscode.git').exports.getAPI(1)
+      var branchName: string = gitExtension._model.repositories[0]._HEAD.name
+    }
     const currentGroup = configMgr.get('currentGroup') as string
     const groups = configMgr.get('groups') as string[]
-    const doesCurrentBranchNameGroupExist = groups.indexOf(branchName) !== -1
-    const isInCurrentBranchGroup = currentGroup === branchName
+    if(!notUsingGit){
+      var doesCurrentBranchNameGroupExist = groups.indexOf(branchName) !== -1
+      var isInCurrentBranchGroup = currentGroup === branchName
+    }
     vscode.window
       .showQuickPick(
-        doesCurrentBranchNameGroupExist && !isInCurrentBranchGroup
+        !notUsingGit&&(doesCurrentBranchNameGroupExist && !isInCurrentBranchGroup)
           ? ['Switch to current branch group'].concat(
               groups.filter((item) => item !== branchName && item !== currentGroup)
             )
