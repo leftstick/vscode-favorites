@@ -251,12 +251,18 @@
       {
         "command": "favorites.group.changeGroup",
         "title": "%command.favorites.changeGroup%",
-        "icon": "$(group-by-ref-type)"
+        "icon": {
+          "dark": "images/switch_group_black.svg",
+          "light": "images/switch_group_light.svg"
+        }
       },
       {
         "command": "favorites.group.newGroup",
         "title": "%command.favorites.newGroup%",
-        "icon": "$(terminal-new)"
+        "icon": {
+          "dark": "images/new_group_black.svg",
+          "light": "images/new_group_light.svg"
+        }
       },
       {
         "command": "favorites.addToFavorites",
