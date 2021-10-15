@@ -2,29 +2,36 @@ import * as vscode from 'vscode'
 
 import { Resource, FavoritesProvider } from '../provider/FavoritesProvider'
 import configMgr from '../helper/configMgr'
+import { getCurrentResources } from '../helper/util'
 
 export function moveToBottom(favoritesProvider: FavoritesProvider) {
-  return vscode.commands.registerCommand('favorites.moveToBottom', async function(value: Resource) {
+  return vscode.commands.registerCommand('favorites.moveToBottom', async function (value: Resource) {
     const config = vscode.workspace.getConfiguration('favorites')
+    const currentGroup = configMgr.get('currentGroup') as string
 
-    const items = await favoritesProvider.getChildren()
+    const items = await getCurrentResources()
+    const filteredArray: {
+      filePath: string
+      group: string
+      previousIndex: number
+    }[] = []
 
-    const currentIndex = items.findIndex(i => i.value === value.value)
-    if (currentIndex === items.length - 1) {
+    items.forEach((value, index) => {
+      if (value.group == currentGroup) {
+        filteredArray.push({ filePath: value.filePath, group: value.group, previousIndex: index })
+      }
+    })
+
+    const currentIndex = filteredArray.find((i) => i.filePath === value.value).previousIndex
+
+    if (currentIndex === filteredArray[filteredArray.length - 1].previousIndex) {
       return
     }
 
-    const resources: Array<string> = []
-
-    for (let i = 0; i < items.length; i++) {
-      if (i === currentIndex) {
-        continue
-      }
-      resources.push(items[i].value)
-    }
-    resources.push(value.value)
+    items.push(items[currentIndex])
+    items.splice(currentIndex, 1)
 
     config.update('sortOrder', 'MANUAL', false)
-    configMgr.save('resources', resources).catch(console.warn)
+    configMgr.save('resources', items).catch(console.warn)
   })
 }
