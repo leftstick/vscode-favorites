@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'
 
-import { isMultiRoots, pathResolve } from '../helper/util'
+import { getCurrentResources, isMultiRoots, pathResolve } from '../helper/util'
 import configMgr from '../helper/configMgr'
 import { FileStat } from '../enum'
 import { Item, ItemInSettingsJson } from '../model'
@@ -77,21 +77,14 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
   }
 
   private getSortedFavoriteResources(): Thenable<Array<ItemInSettingsJson>> {
-    const resources = configMgr.get('resources') as Array<ItemInSettingsJson|string>
-    const newResources:Array<ItemInSettingsJson> = resources.map((item)=>{
-      if(typeof(item) == 'string'){
-        return {filePath:item,group:"Default"} as ItemInSettingsJson
-      }else{
-        return item
-      }
-    })
+    const resources = getCurrentResources()
     const sort = <string>vscode.workspace.getConfiguration('favorites').get('sortOrder')
 
     if (sort === 'MANUAL') {
-      return Promise.resolve(newResources)
+      return Promise.resolve(resources)
     }
 
-    return this.sortResources(newResources.map((item)=>item), sort).then((res) => res.map((r) => ({filePath:r.filePath,group:r.group})))
+    return this.sortResources(resources.map((item)=>item), sort).then((res) => res.map((r) => ({filePath:r.filePath,group:r.group})))
   }
 
   private sortResources(resources: Array<ItemInSettingsJson>, sort: string): Thenable<Array<Item>> {

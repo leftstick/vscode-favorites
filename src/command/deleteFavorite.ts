@@ -2,7 +2,7 @@ import * as vscode from 'vscode'
 
 import { Resource } from '../provider/FavoritesProvider'
 import configMgr from '../helper/configMgr'
-import { pathResolve } from '../helper/util'
+import { getCurrentResources, pathResolve } from '../helper/util'
 import { ItemInSettingsJson } from '../model'
 
 export function deleteFavorite() {
@@ -14,7 +14,7 @@ export function deleteFavorite() {
       value = vscode.window.activeTextEditor.document.uri
     }
 
-    const previousResources = configMgr.get('resources') as Array<ItemInSettingsJson>
+    const previousResources = getCurrentResources()
 
     const uri = (<Resource>value).resourceUri || (<vscode.Uri>value)
 
