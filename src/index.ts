@@ -45,11 +45,11 @@ export function activate(context: vscode.ExtensionContext) {
   })
 
   const currentGroup = configMgr.get('currentGroup')
-  tree.message = `Current Group: ${currentGroup??'Default'}`
+  tree.message = `Current Group: ${currentGroup}`
 
   vscode.workspace.onDidChangeConfiguration(
     () => {
-      const currentGroup = configMgr.get('currentGroup'??'Default')
+      const currentGroup = configMgr.get('currentGroup')
       tree.message = `Current Group: ${currentGroup}`
       favoritesProvider.refresh()
     },
