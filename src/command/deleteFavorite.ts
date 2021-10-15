@@ -16,7 +16,7 @@ export function deleteFavorite() {
 
     const previousResources = getCurrentResources()
 
-    const uri = (<Resource>value).resourceUri || (<vscode.Uri>value)
+    const uri = (<Resource>value).resourceUri || <vscode.Uri>value
 
     if (uri.scheme === 'file') {
       const fsPath = (<Resource>value).value || (<vscode.Uri>value).fsPath
@@ -26,21 +26,20 @@ export function deleteFavorite() {
       configMgr
         .save(
           'resources',
-          previousResources.filter(r => {
-            if (r.filePath !== fsPath && pathResolve(r.filePath) !== fsPath && r.group !==currentGroup ) {
+          previousResources.filter((r) => {
+            if ((r.filePath !== fsPath && pathResolve(r.filePath) !== fsPath )|| r.group !== currentGroup) {
               return true
             }
             return false
           })
         )
         .catch(console.warn)
-    }
-    else {
+    } else {
       // Not a file, so remove the stringified uri
       configMgr
         .save(
           'resources',
-          previousResources.filter(r => {
+          previousResources.filter((r) => {
             if (r.filePath !== uri.toString()) {
               return true
             }
