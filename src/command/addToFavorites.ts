@@ -1,5 +1,5 @@
 import * as vscode from 'vscode'
-import { isMultiRoots, getSingleRootPath } from '../helper/util'
+import { isMultiRoots, getSingleRootPath, getCurrentResources } from '../helper/util'
 import configMgr from '../helper/configMgr'
 import { ItemInSettingsJson } from '../model'
 
@@ -14,7 +14,7 @@ export function addToFavorites() {
 
     const fileName = fileUri.fsPath
 
-    const previousResources = configMgr.get('resources') as Array<ItemInSettingsJson>
+    const previousResources = getCurrentResources()
 
     // Store the stringified uri for any resource that isn't a file
     const newResource =
@@ -25,6 +25,7 @@ export function addToFavorites() {
         : fileName.substr(getSingleRootPath().length + 1)
 
     const currentGroup = configMgr.get('currentGroup') as string
+    
     if (previousResources.some((r) => r.filePath === newResource && r.group === currentGroup)) {
       return
     }
