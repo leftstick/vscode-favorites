@@ -19,7 +19,7 @@ ext install howardzuo.vscode-favorites
 
 ## Usage
 
-An __Add to Favorites__ command in Explorer's context menu saves links to your favorite files or folders into your _*`XYZ`*_`.code-workspace` file if you are using one, else into the `.vscode/settings.json` file of your root folder.
+An **Add to Favorites** command in Explorer's context menu saves links to your favorite files or folders into your _*`XYZ`*_`.code-workspace` file if you are using one, else into the `.vscode/settings.json` file of your root folder.
 
 Your favorites are listed in a separate view and can be quickly accessed from there.
 
@@ -30,10 +30,12 @@ Your favorites are listed in a separate view and can be quickly accessed from th
     "favorites.resources": [], // resources path you prefer to mark
     "favorites.sortOrder": "ASC", // DESC, MANUAL
     "favorites.saveSeparated": false // whether to use an extra config file
+    "favorites.groups": ["Default"], // the groups you have created
+    "favorites.currentGroup": "Default" // determine the current using group
 }
 ```
 
-> You normally don't need to modify this config manually. Use  context menus instead.
+> You normally don't need to modify this config manually. Use context menus instead.
 
 ## Changelog
 

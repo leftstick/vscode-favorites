@@ -1,5 +1,9 @@
 <!--Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.-->
 
+### 2021-10-19
+
+1. Support group feature (by [@s19514tt](https://github.com/s19514tt))
+
 ### 2020-05-14
 
 1. Support double click feature (by [@gjsjohnmurray](https://github.com/gjsjohnmurray))

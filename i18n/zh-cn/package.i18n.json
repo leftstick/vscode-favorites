@@ -12,5 +12,7 @@
   "command.favorites.revealInOS.other": "打开所在地址",
   "command.favorites.revealInSideBar": "在侧边栏显示",
   "command.favorites.openToSide": "从侧边栏打开",
+  "command.favorites.changeGroup": "切换当前分组",
+  "command.favorites.newGroup": "创建新分组",
   "view.favorites.title": "收藏"
 }
