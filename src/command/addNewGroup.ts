@@ -2,6 +2,7 @@ import * as vscode from 'vscode'
 
 import { Resource, FavoritesProvider } from '../provider/FavoritesProvider'
 import configMgr from '../helper/configMgr'
+import { DEFAULT_GROUP } from '../enum'
 
 export function addNewGroup(favoritesProvider: FavoritesProvider) {
   return vscode.commands.registerCommand('favorites.group.newGroup', async function (value: Resource) {
@@ -12,7 +13,10 @@ export function addNewGroup(favoritesProvider: FavoritesProvider) {
       const gitExtension = vscode.extensions.getExtension('vscode.git').exports.getAPI(1)
       branchName = gitExtension._model.repositories[0]._HEAD.name
     }
-    const previousGroups = configMgr.get('groups') as Array<string>
+    const previousGroups = Array.from(
+      new Set(((configMgr.get('groups') as string[]) || []).concat([DEFAULT_GROUP]))
+    )
+
     vscode.window
       .showQuickPick(
         ['Input new group name'].concat(notUsingGit ? [] : ['Create group with current branch name'])

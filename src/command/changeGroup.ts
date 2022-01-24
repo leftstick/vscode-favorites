@@ -2,6 +2,7 @@ import * as vscode from 'vscode'
 
 import { Resource, FavoritesProvider } from '../provider/FavoritesProvider'
 import configMgr from '../helper/configMgr'
+import { DEFAULT_GROUP } from '../enum'
 
 export function changeGroup(favoritesProvider: FavoritesProvider) {
   return vscode.commands.registerCommand('favorites.group.changeGroup', async function (value: Resource) {
@@ -12,11 +13,14 @@ export function changeGroup(favoritesProvider: FavoritesProvider) {
       const gitExtension = vscode.extensions.getExtension('vscode.git').exports.getAPI(1)
       branchName = gitExtension._model.repositories[0]._HEAD.name
     }
-    const currentGroup = configMgr.get('currentGroup') as string
-    const groups = configMgr.get('groups') as string[]
+    const currentGroup = (configMgr.get('currentGroup') as string) || DEFAULT_GROUP
+    const groups = Array.from(new Set(((configMgr.get('groups') as string[]) || []).concat([DEFAULT_GROUP])))
+
+    let doesCurrentBranchNameGroupExist: boolean
+    let isInCurrentBranchGroup: boolean
     if (!notUsingGit) {
-      var doesCurrentBranchNameGroupExist = groups.indexOf(branchName) !== -1
-      var isInCurrentBranchGroup = currentGroup === branchName
+      doesCurrentBranchNameGroupExist = groups.indexOf(branchName) !== -1
+      isInCurrentBranchGroup = currentGroup === branchName
     }
     vscode.window
       .showQuickPick(

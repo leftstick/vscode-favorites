@@ -1,10 +1,11 @@
 import * as vscode from 'vscode'
 import { isMultiRoots, getSingleRootPath, getCurrentResources } from '../helper/util'
 import configMgr from '../helper/configMgr'
+import { DEFAULT_GROUP } from '../enum'
 import { ItemInSettingsJson } from '../model'
 
 export function addToFavorites() {
-  return vscode.commands.registerCommand('favorites.addToFavorites', (fileUri?: vscode.Uri) => {
+  return vscode.commands.registerCommand('favorites.addToFavorites', async (fileUri?: vscode.Uri) => {
     if (!fileUri) {
       if (!vscode.window.activeTextEditor) {
         return vscode.window.showWarningMessage('You have to choose a resource first')
@@ -24,13 +25,13 @@ export function addToFavorites() {
         ? fileName
         : fileName.substr(getSingleRootPath().length + 1)
 
-    const currentGroup = configMgr.get('currentGroup') as string
-    
+    const currentGroup = (configMgr.get('currentGroup') as string) || DEFAULT_GROUP
+
     if (previousResources.some((r) => r.filePath === newResource && r.group === currentGroup)) {
       return
     }
 
-    configMgr
+    await configMgr
       .save(
         'resources',
         previousResources.concat([
@@ -40,7 +41,7 @@ export function addToFavorites() {
       .catch(console.warn)
 
     if (configMgr.get('groups') == undefined || configMgr.get('groups').length == 0) {
-      configMgr.save('groups', ['Default']).catch(console.warn)
+      configMgr.save('groups', [DEFAULT_GROUP]).catch(console.warn)
     }
   })
 }

@@ -8,7 +8,7 @@ import { ItemInSettingsJson } from '../model'
 class ConfigMgr {
   eventEmitter: vscode.EventEmitter<void> = new vscode.EventEmitter<void>()
 
-  get(key): Array<ItemInSettingsJson|string>|string|Array<string> {
+  get(key): Array<ItemInSettingsJson | string> | string {
     const config = vscode.workspace.getConfiguration('favorites')
     const useSeparate = <boolean>config.get('saveSeparated')
 
@@ -18,7 +18,7 @@ class ConfigMgr {
 
     nconf.file({ file: path.resolve(getSingleRootPath(), '.vscfavoriterc') })
 
-    return nconf.get(key) || []
+    return nconf.get(key)
   }
 
   save(key: string, value: any): Promise<void> {
@@ -31,11 +31,10 @@ class ConfigMgr {
     }
 
     nconf.file({ file: path.resolve(getSingleRootPath(), '.vscfavoriterc') })
-
     nconf.set(key, value)
 
     return new Promise<void>((resolve, reject) => {
-      nconf.save(err => {
+      nconf.save((err) => {
         if (err) {
           return reject(err)
         }

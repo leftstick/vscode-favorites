@@ -1,6 +1,7 @@
 import * as vscode from 'vscode'
 import * as path from 'path'
 import { ItemInSettingsJson } from '../model'
+import { DEFAULT_GROUP } from '../enum'
 import configMgr from './configMgr'
 
 export function getSingleRootPath(): string {
@@ -23,10 +24,10 @@ export function pathResolve(filePath: string) {
 }
 
 export function getCurrentResources(): Array<ItemInSettingsJson> {
-  const resources = configMgr.get('resources') as Array<ItemInSettingsJson | string>
+  const resources = (configMgr.get('resources') as Array<ItemInSettingsJson | string>) || []
   const newResources: Array<ItemInSettingsJson> = resources.map((item) => {
     if (typeof item == 'string') {
-      return { filePath: item, group: 'Default' } as ItemInSettingsJson
+      return { filePath: item, group: DEFAULT_GROUP } as ItemInSettingsJson
     } else {
       return item
     }
@@ -34,11 +35,12 @@ export function getCurrentResources(): Array<ItemInSettingsJson> {
   return newResources
 }
 
-export function replaceArrayElements<T>(array:Array<T>, targetId:number, sourceId:number):Array<T> {
-  return array.reduce((resultArray, element, id, originalArray) => [
+export function replaceArrayElements<T>(array: Array<T>, targetId: number, sourceId: number): Array<T> {
+  return array.reduce(
+    (resultArray, element, id, originalArray) => [
       ...resultArray,
-      id === targetId ? originalArray[sourceId] :
-      id === sourceId ? originalArray[targetId] :
-      element
-  ], []);
+      id === targetId ? originalArray[sourceId] : id === sourceId ? originalArray[targetId] : element,
+    ],
+    []
+  )
 }

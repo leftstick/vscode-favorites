@@ -1,7 +1,7 @@
-
-
 export enum FileStat {
-    FILE,
-    DIRECTORY,
-    NEITHER
+  FILE,
+  DIRECTORY,
+  NEITHER,
 }
+
+export const DEFAULT_GROUP = 'Default'
