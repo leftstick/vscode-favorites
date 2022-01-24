@@ -5,7 +5,7 @@ import * as os from 'os'
 
 import { getCurrentResources, isMultiRoots, pathResolve } from '../helper/util'
 import configMgr from '../helper/configMgr'
-import { FileStat } from '../enum'
+import { DEFAULT_GROUP, FileStat } from '../enum'
 import { Item, ItemInSettingsJson } from '../model'
 
 export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
@@ -13,7 +13,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
   readonly onDidChangeTreeData: vscode.Event<Resource | void> = this._onDidChangeTreeData.event
 
   // Use for detecting doubleclick
-  public lastOpened: { uri: vscode.Uri, date: Date }
+  public lastOpened: { uri: vscode.Uri; date: Date }
 
   refresh(): void {
     this._onDidChangeTreeData.fire()
@@ -28,6 +28,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
       if (!resources || !resources.length) {
         return []
       }
+      const currentGroup = (configMgr.get('currentGroup') as string) || DEFAULT_GROUP
 
       if (!element) {
         return Promise.all(resources.map((r) => this.getResourceStat(r)))
@@ -35,12 +36,12 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
             return data.filter((i) => i.stat !== FileStat.NEITHER)
           })
           .then((data: Array<Item>) => {
-            return data.filter((i) => i.group === (configMgr.get('currentGroup') as string))
+            return data.filter((i) => i.group === currentGroup)
           })
           .then((data: Array<Item>) => this.data2Resource(data, 'resource'))
       }
 
-      return this.getChildrenResources({filePath:element.value,group:''})
+      return this.getChildrenResources({ filePath: element.value, group: currentGroup })
     })
   }
 
@@ -50,11 +51,13 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
     if (item.filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:\/\//)) {
       // filePath is a uri string
       const uri = vscode.Uri.parse(item.filePath)
-      return vscode.workspace.fs.readDirectory(uri)
-        .then((entries) => this.sortResources(
-          entries.map((e) => ({filePath:vscode.Uri.joinPath(uri, e[0]).toString(),group:''})),
-          sort === 'MANUAL' ? 'ASC' : sort
-        )
+      return vscode.workspace.fs
+        .readDirectory(uri)
+        .then((entries) =>
+          this.sortResources(
+            entries.map((e) => ({ filePath: vscode.Uri.joinPath(uri, e[0]).toString(), group: '' })),
+            sort === 'MANUAL' ? 'ASC' : sort
+          )
         )
         .then((items) => this.data2Resource(items, 'resourceChild'))
     }
@@ -67,7 +70,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
         }
 
         this.sortResources(
-          files.map((f) => ({filePath:path.join(item.filePath, f),group:''})),
+          files.map((f) => ({ filePath: path.join(item.filePath, f), group: '' })),
           sort === 'MANUAL' ? 'ASC' : sort
         )
           .then((data) => this.data2Resource(data, 'resourceChild'))
@@ -84,7 +87,10 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
       return Promise.resolve(resources)
     }
 
-    return this.sortResources(resources.map((item)=>item), sort).then((res) => res.map((r) => ({filePath:r.filePath,group:r.group})))
+    return this.sortResources(
+      resources.map((item) => item),
+      sort
+    ).then((res) => res.map((r) => ({ filePath: r.filePath, group: r.group })))
   }
 
   private sortResources(resources: Array<ItemInSettingsJson>, sort: string): Thenable<Array<Item>> {
@@ -118,61 +124,59 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
         // filePath is a uri string
         const uri = vscode.Uri.parse(item.filePath)
         resolve(
-          vscode.workspace.fs.stat(uri)
-            .then((fileStat) => {
-              if (fileStat.type === vscode.FileType.File) {
-                return {
-                  filePath:item.filePath,
-                  stat: FileStat.FILE,
-                  uri,
-                  group:item.group
-                }
-              }
-              if (fileStat.type === vscode.FileType.Directory) {
-                return {
-                  filePath:item.filePath,
-                  stat: FileStat.DIRECTORY,
-                  uri,
-                  group:item.group
-                }
-              }
+          vscode.workspace.fs.stat(uri).then((fileStat) => {
+            if (fileStat.type === vscode.FileType.File) {
               return {
-                filePath:item.filePath,
-                stat: FileStat.NEITHER,
+                filePath: item.filePath,
+                stat: FileStat.FILE,
                 uri,
-                group:item.group
+                group: item.group,
               }
-            })
+            }
+            if (fileStat.type === vscode.FileType.Directory) {
+              return {
+                filePath: item.filePath,
+                stat: FileStat.DIRECTORY,
+                uri,
+                group: item.group,
+              }
+            }
+            return {
+              filePath: item.filePath,
+              stat: FileStat.NEITHER,
+              uri,
+              group: item.group,
+            }
+          })
         )
-      }
-      else {
+      } else {
         // filePath is a file path
         fs.stat(pathResolve(item.filePath), (err, stat: fs.Stats) => {
           if (err) {
             return resolve({
-              filePath:item.filePath,
+              filePath: item.filePath,
               stat: FileStat.NEITHER,
-              group:item.group
+              group: item.group,
             })
           }
           if (stat.isDirectory()) {
             return resolve({
-              filePath:item.filePath,
+              filePath: item.filePath,
               stat: FileStat.DIRECTORY,
-              group:item.group
+              group: item.group,
             })
           }
           if (stat.isFile()) {
             return resolve({
-              filePath:item.filePath,
+              filePath: item.filePath,
               stat: FileStat.FILE,
-              group:item.group
+              group: item.group,
             })
           }
           return resolve({
-            filePath:item.filePath,
+            filePath: item.filePath,
             stat: FileStat.NEITHER,
-            group:item.group
+            group: item.group,
           })
         })
       }
@@ -212,12 +216,11 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
           {
             command: 'favorites.open',
             title: '',
-            arguments: [uri]
+            arguments: [uri],
           },
           uri
         )
-      }
-      else {
+      } else {
         if (i.stat === FileStat.DIRECTORY) {
           return new Resource(
             path.basename(i.filePath),
@@ -236,7 +239,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
           {
             command: 'favorites.open',
             title: '',
-            arguments: [i.uri]
+            arguments: [i.uri],
           },
           i.uri
         )
@@ -258,7 +261,7 @@ export class Resource extends vscode.TreeItem {
   ) {
     super(label, collapsibleState)
 
-    this.resourceUri = (uri) ? uri : vscode.Uri.file(value)
+    this.resourceUri = uri ? uri : vscode.Uri.file(value)
     this.tooltip = value
   }
 }
