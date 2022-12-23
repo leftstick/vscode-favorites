@@ -46,7 +46,7 @@ Your favorites are listed in a separate view and can be quickly accessed from th
 [GPL v3 License](https://raw.githubusercontent.com/leftstick/vscode-favorites/master/LICENSE)
 
 [vs-url]: https://marketplace.visualstudio.com/items?itemName=howardzuo.vscode-favorites
-[vs-image]: https://vsmarketplacebadge.apphb.com/version/howardzuo.vscode-favorites.svg
-[install-url]: https://vsmarketplacebadge.apphb.com/installs/howardzuo.vscode-favorites.svg
-[rate-url]: https://vsmarketplacebadge.apphb.com/rating/howardzuo.vscode-favorites.svg
-[license-url]: https://img.shields.io/github/license/leftstick/vscode-favorites.svg
+[vs-image]: https://img.shields.io/visual-studio-marketplace/v/howardzuo.vscode-favorites
+[install-url]: https://img.shields.io/visual-studio-marketplace/i/howardzuo.vscode-favorites
+[rate-url]: https://img.shields.io/visual-studio-marketplace/r/howardzuo.vscode-favorites
+[license-url]: https://img.shields.io/github/license/leftstick/vscode-favorites

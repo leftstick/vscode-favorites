@@ -2,16 +2,16 @@
   "name": "vscode-favorites",
   "displayName": "favorites",
   "description": "Mark resources (files or folders, local and remote) as favorites, so they can be easily accessed.",
-  "version": "1.10.2",
+  "version": "1.11.0",
   "publisher": "howardzuo",
   "engines": {
-    "vscode": "^1.61.0"
+    "vscode": "^1.68.0"
   },
   "scripts": {
     "watch": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
     "build": "gulp build",
     "pub": "gulp publish",
+    "clean": "gulp clean",
     "pk": "gulp package"
   },
   "categories": [
@@ -33,7 +33,7 @@
     "onView:favorites-full-view"
   ],
   "license": "GPL-3.0",
-  "main": "./out/",
+  "main": "./out/index.js",
   "contributes": {
     "configuration": {
       "type": "object",
@@ -311,20 +311,19 @@
     ]
   },
   "devDependencies": {
-    "@types/node": "^16.11.1",
-    "del": "^6.0.0",
+    "@types/node": "^18.11.17",
+    "@types/vscode": "^1.68.0",
+    "@vscode/vsce": "^2.16.0",
+    "del": "^7.0.0",
     "event-stream": "^4.0.1",
     "gulp": "^4.0.2",
     "gulp-rename": "^2.0.0",
     "gulp-sourcemaps": "^3.0.0",
     "gulp-typescript": "^6.0.0-alpha.1",
     "run-sequence": "^2.2.1",
-    "typescript": "^4.4.4",
-    "vsce": "^1.100.1",
-    "vscode": "^1.1.37",
-    "vscode-nls-dev": "^3.3.2"
+    "typescript": "^4.9.4"
   },
   "dependencies": {
-    "nconf": "^0.11.3"
+    "nconf": "^0.12.0"
   }
 }

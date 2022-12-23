@@ -3,23 +3,24 @@ import * as vscode from 'vscode'
 import { Resource, FavoritesProvider } from '../provider/FavoritesProvider'
 import configMgr from '../helper/configMgr'
 import { DEFAULT_GROUP } from '../enum'
+import { getFirstGitRepository, getGitBranchName } from '../helper/util'
 
 export function addNewGroup(favoritesProvider: FavoritesProvider) {
   return vscode.commands.registerCommand('favorites.group.newGroup', async function (value: Resource) {
-    const notUsingGit =
-      vscode.extensions.getExtension('vscode.git')?.exports?.getAPI(1)._model.repositories[0] == undefined
+    const isGitUsed = !!getFirstGitRepository()
+
     let branchName: string = 'no_git_master'
-    if (!notUsingGit) {
-      const gitExtension = vscode.extensions.getExtension('vscode.git').exports.getAPI(1)
-      branchName = gitExtension._model.repositories[0]._HEAD.name
+    if (isGitUsed) {
+      branchName = getGitBranchName()
     }
+
     const previousGroups = Array.from(
       new Set(((configMgr.get('groups') as string[]) || []).concat([DEFAULT_GROUP]))
     )
 
     vscode.window
       .showQuickPick(
-        ['Input new group name'].concat(notUsingGit ? [] : ['Create group with current branch name'])
+        ['Input new group name'].concat(!isGitUsed ? [] : ['Create group with current branch name'])
       )
       .then((label) => {
         if (label == 'Input new group name') {

@@ -2,29 +2,29 @@ import * as vscode from 'vscode'
 
 import { Resource, FavoritesProvider } from '../provider/FavoritesProvider'
 import configMgr from '../helper/configMgr'
+import { getFirstGitRepository, getGitBranchName } from '../helper/util'
 import { DEFAULT_GROUP } from '../enum'
 
 export function changeGroup(favoritesProvider: FavoritesProvider) {
   return vscode.commands.registerCommand('favorites.group.changeGroup', async function (value: Resource) {
-    const notUsingGit =
-      vscode.extensions.getExtension('vscode.git')?.exports?.getAPI(1)._model.repositories[0] == undefined
+    const isGitUsed = !!getFirstGitRepository()
+
     let branchName: string = 'no_git_master'
-    if (!notUsingGit) {
-      const gitExtension = vscode.extensions.getExtension('vscode.git').exports.getAPI(1)
-      branchName = gitExtension._model.repositories[0]._HEAD.name
+    if (isGitUsed) {
+      branchName = getGitBranchName()
     }
     const currentGroup = (configMgr.get('currentGroup') as string) || DEFAULT_GROUP
     const groups = Array.from(new Set(((configMgr.get('groups') as string[]) || []).concat([DEFAULT_GROUP])))
 
     let doesCurrentBranchNameGroupExist: boolean
     let isInCurrentBranchGroup: boolean
-    if (!notUsingGit) {
+    if (isGitUsed) {
       doesCurrentBranchNameGroupExist = groups.indexOf(branchName) !== -1
       isInCurrentBranchGroup = currentGroup === branchName
     }
     vscode.window
       .showQuickPick(
-        !notUsingGit && doesCurrentBranchNameGroupExist && !isInCurrentBranchGroup
+        isGitUsed && doesCurrentBranchNameGroupExist && !isInCurrentBranchGroup
           ? ['Switch to current branch group'].concat(
               groups.filter((item) => item !== branchName && item !== currentGroup)
             )
