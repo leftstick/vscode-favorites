@@ -35,7 +35,7 @@ export function addToFavorites() {
       .save(
         'resources',
         previousResources.concat([
-          { filePath: newResource, group: currentGroup },
+          { filePath: newResource, displayName: newResource, group: currentGroup },
         ] as Array<ItemInSettingsJson>)
       )
       .catch(console.warn)
