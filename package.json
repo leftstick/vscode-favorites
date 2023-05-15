@@ -42,7 +42,7 @@
         "favorites.resources": {
           "type": "array",
           "default": [],
-          "description": "Resources marked as favorites"
+          "description": "Resources marked as favorites. Can optionally update 'displayName' to change the value shown in the tree view."
         },
         "favorites.sortOrder": {
           "type": "string",

@@ -12,13 +12,19 @@ export function moveDown(favoritesProvider: FavoritesProvider) {
     const items = await getCurrentResources()
     const filteredArray: {
       filePath: string
+      displayName: string
       group: string
       previousIndex: number
     }[] = []
 
     items.forEach((value, index) => {
       if (value.group == currentGroup) {
-        filteredArray.push({ filePath: value.filePath, group: value.group, previousIndex: index })
+        filteredArray.push({
+          filePath: value.filePath,
+          displayName: value.displayName,
+          group: value.group,
+          previousIndex: index
+        })
       }
     })
 

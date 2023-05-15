@@ -28,7 +28,7 @@ export function getCurrentResources(): Array<ItemInSettingsJson> {
   const resources = (configMgr.get('resources') as Array<ItemInSettingsJson | string>) || []
   const newResources: Array<ItemInSettingsJson> = resources.map((item) => {
     if (typeof item == 'string') {
-      return { filePath: item, group: DEFAULT_GROUP } as ItemInSettingsJson
+      return { filePath: item, displayName: item, group: DEFAULT_GROUP } as ItemInSettingsJson
     } else {
       return item
     }

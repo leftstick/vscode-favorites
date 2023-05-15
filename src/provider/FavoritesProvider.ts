@@ -41,7 +41,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
           .then((data: Array<Item>) => this.data2Resource(data, 'resource'))
       }
 
-      return this.getChildrenResources({ filePath: element.value, group: currentGroup })
+      return this.getChildrenResources({ filePath: element.value, displayName: '', group: currentGroup })
     })
   }
 
@@ -55,7 +55,11 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
         .readDirectory(uri)
         .then((entries) =>
           this.sortResources(
-            entries.map((e) => ({ filePath: vscode.Uri.joinPath(uri, e[0]).toString(), group: '' })),
+            entries.map((e) => ({
+              filePath: vscode.Uri.joinPath(uri, e[0]).toString(),
+              displayName: '',
+              group: ''
+            })),
             sort === 'MANUAL' ? 'ASC' : sort
           )
         )
@@ -70,7 +74,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
         }
 
         this.sortResources(
-          files.map((f) => ({ filePath: path.join(item.filePath, f), group: '' })),
+          files.map((f) => ({ filePath: path.join(item.filePath, f), displayName: '', group: '' })),
           sort === 'MANUAL' ? 'ASC' : sort
         )
           .then((data) => this.data2Resource(data, 'resourceChild'))
@@ -90,7 +94,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
     return this.sortResources(
       resources.map((item) => item),
       sort
-    ).then((res) => res.map((r) => ({ filePath: r.filePath, group: r.group })))
+    ).then((res) => res.map((r) => ({ filePath: r.filePath, displayName: r.displayName, group: r.group })))
   }
 
   private sortResources(resources: Array<ItemInSettingsJson>, sort: string): Thenable<Array<Item>> {
@@ -128,6 +132,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
             if (fileStat.type === vscode.FileType.File) {
               return {
                 filePath: item.filePath,
+                displayName: item.displayName,
                 stat: FileStat.FILE,
                 uri,
                 group: item.group,
@@ -136,6 +141,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
             if (fileStat.type === vscode.FileType.Directory) {
               return {
                 filePath: item.filePath,
+                displayName: item.displayName,
                 stat: FileStat.DIRECTORY,
                 uri,
                 group: item.group,
@@ -143,6 +149,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
             }
             return {
               filePath: item.filePath,
+              displayName: item.displayName,
               stat: FileStat.NEITHER,
               uri,
               group: item.group,
@@ -156,6 +163,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
             return resolve({
               filePath: item.filePath,
               stat: FileStat.NEITHER,
+              displayName: item.displayName,
               group: item.group,
             })
           }
@@ -163,6 +171,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
             return resolve({
               filePath: item.filePath,
               stat: FileStat.DIRECTORY,
+              displayName: item.displayName,
               group: item.group,
             })
           }
@@ -170,12 +179,14 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
             return resolve({
               filePath: item.filePath,
               stat: FileStat.FILE,
+              displayName: item.displayName,
               group: item.group,
             })
           }
           return resolve({
             filePath: item.filePath,
             stat: FileStat.NEITHER,
+            displayName: item.displayName,
             group: item.group,
           })
         })
@@ -192,6 +203,12 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
     //   to be smarter about which commands to offer.
 
     return data.map((i) => {
+      let displayName = ''
+      if (i.displayName === '') {
+        displayName = path.basename(i.filePath)
+      } else {
+        displayName = i.displayName
+      }
       if (!i.uri) {
         let uri = vscode.Uri.parse(`file://${pathResolve(i.filePath)}`)
         if (os.platform().startsWith('win')) {
@@ -199,7 +216,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
         }
         if (i.stat === FileStat.DIRECTORY) {
           return new Resource(
-            path.basename(i.filePath),
+            displayName,
             vscode.TreeItemCollapsibleState.Collapsed,
             i.filePath,
             contextValue + '.dir',
@@ -209,7 +226,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
         }
 
         return new Resource(
-          path.basename(i.filePath),
+          displayName,
           vscode.TreeItemCollapsibleState.None,
           i.filePath,
           contextValue,
@@ -223,7 +240,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
       } else {
         if (i.stat === FileStat.DIRECTORY) {
           return new Resource(
-            path.basename(i.filePath),
+            displayName,
             vscode.TreeItemCollapsibleState.Collapsed,
             i.filePath,
             'uri.' + contextValue + '.dir',
@@ -232,7 +249,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
           )
         }
         return new Resource(
-          path.basename(i.filePath),
+          displayName,
           vscode.TreeItemCollapsibleState.None,
           i.filePath,
           'uri.' + contextValue,
