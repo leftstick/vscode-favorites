@@ -11,13 +11,16 @@ export function changeGroup(favoritesProvider: FavoritesProvider) {
 
     let branchName: string = 'no_git_master'
     if (isGitUsed) {
-      branchName = getGitBranchName()
+      const gitBranchName = getGitBranchName()
+      branchName = gitBranchName || branchName
     }
-    const currentGroup = (configMgr.get('currentGroup') as string) || DEFAULT_GROUP
-    const groups = Array.from(new Set(((configMgr.get('groups') as string[]) || []).concat([DEFAULT_GROUP])))
+    const currentGroup = ((await configMgr.get('currentGroup')) as string) || DEFAULT_GROUP
+    const groups = Array.from(
+      new Set((((await configMgr.get('groups')) as string[]) || []).concat([DEFAULT_GROUP])),
+    )
 
-    let doesCurrentBranchNameGroupExist: boolean
-    let isInCurrentBranchGroup: boolean
+    let doesCurrentBranchNameGroupExist: boolean = false
+    let isInCurrentBranchGroup: boolean = false
     if (isGitUsed) {
       doesCurrentBranchNameGroupExist = groups.indexOf(branchName) !== -1
       isInCurrentBranchGroup = currentGroup === branchName
@@ -26,16 +29,16 @@ export function changeGroup(favoritesProvider: FavoritesProvider) {
       .showQuickPick(
         isGitUsed && doesCurrentBranchNameGroupExist && !isInCurrentBranchGroup
           ? ['Switch to current branch group'].concat(
-              groups.filter((item) => item !== branchName && item !== currentGroup)
+              groups.filter((item) => item !== branchName && item !== currentGroup),
             )
           : groups.filter((item) => item !== branchName && item !== currentGroup),
-        { title: 'Choose a group you want to switch to' }
+        { title: 'Choose a group you want to switch to' },
       )
-      .then((selectedCommand) => {
+      .then(async (selectedCommand) => {
         if (selectedCommand === 'Switch to current branch group') {
-          configMgr.save('currentGroup', branchName)
+          await configMgr.save('currentGroup', branchName)
         } else if (selectedCommand != undefined) {
-          configMgr.save('currentGroup', selectedCommand)
+          await configMgr.save('currentGroup', selectedCommand)
         }
       })
   })

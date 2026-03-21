@@ -1,5 +1,17 @@
 <!--Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.-->
 
+### 2026-03-21
+
+1. Modernize build system: Replace Gulp with esbuild for faster builds
+2. Upgrade dependencies and TypeScript to latest versions
+3. Replace nconf with VS Code built-in configuration API
+4. Unify file system operations using VS Code file system API
+5. Implement incremental update for tree view to improve performance
+6. Refactor command handling to properly handle async operations
+7. Add error handling and user feedback
+8. Improve code quality and type safety
+9. Update VS Code engine requirement to ^1.80.0
+
 ### 2021-10-19
 
 1. Support group feature (by [@s19514tt](https://github.com/s19514tt))

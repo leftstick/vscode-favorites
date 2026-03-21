@@ -1,5 +1,4 @@
 import * as vscode from 'vscode'
-import * as nconf from 'nconf'
 import * as path from 'path'
 
 import { isMultiRoots, getSingleRootPath } from './util'
@@ -8,7 +7,7 @@ import { ItemInSettingsJson } from '../model'
 class ConfigMgr {
   eventEmitter: vscode.EventEmitter<void> = new vscode.EventEmitter<void>()
 
-  get(key): Array<ItemInSettingsJson | string> | string {
+  async get(key: string): Promise<Array<ItemInSettingsJson | string> | string | undefined> {
     const config = vscode.workspace.getConfiguration('favorites')
     const useSeparate = <boolean>config.get('saveSeparated')
 
@@ -16,32 +15,55 @@ class ConfigMgr {
       return <Array<ItemInSettingsJson>>config.get(key)
     }
 
-    nconf.file({ file: path.resolve(getSingleRootPath(), '.vscfavoriterc') })
-
-    return nconf.get(key)
+    return this.readFromSeparateFile(key)
   }
 
-  save(key: string, value: any): Promise<void> {
+  async save(key: string, value: any): Promise<void> {
     const config = vscode.workspace.getConfiguration('favorites')
     const useSeparate = <boolean>config.get('saveSeparated')
 
     if (isMultiRoots() || !useSeparate) {
-      config.update(key, value, false)
-      return Promise.resolve()
+      await config.update(key, value, false)
+      this.eventEmitter.fire()
+      return
     }
 
-    nconf.file({ file: path.resolve(getSingleRootPath(), '.vscfavoriterc') })
-    nconf.set(key, value)
+    await this.writeToSeparateFile(key, value)
+    this.eventEmitter.fire()
+  }
 
-    return new Promise<void>((resolve, reject) => {
-      nconf.save((err) => {
-        if (err) {
-          return reject(err)
-        }
-        this.eventEmitter.fire()
-        resolve()
-      })
-    })
+  private async readFromSeparateFile(key: string): Promise<any> {
+    try {
+      const filePath = path.resolve(getSingleRootPath(), '.vscfavoriterc')
+      const uri = vscode.Uri.file(filePath)
+      const content = await vscode.workspace.fs.readFile(uri)
+      const config = JSON.parse(content.toString())
+      return config[key]
+    } catch (error) {
+      return undefined
+    }
+  }
+
+  private async writeToSeparateFile(key: string, value: any): Promise<void> {
+    try {
+      const filePath = path.resolve(getSingleRootPath(), '.vscfavoriterc')
+      const uri = vscode.Uri.file(filePath)
+
+      let config: any = {}
+      try {
+        const content = await vscode.workspace.fs.readFile(uri)
+        config = JSON.parse(content.toString())
+      } catch (error) {
+        // File doesn't exist or is invalid, create a new one
+      }
+
+      config[key] = value
+      const content = Buffer.from(JSON.stringify(config, null, 2))
+      await vscode.workspace.fs.writeFile(uri, content)
+    } catch (error) {
+      console.error('Error writing to .vscfavoriterc:', error)
+      throw error
+    }
   }
 
   get onConfigChange(): vscode.Event<void> {

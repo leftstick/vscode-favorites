@@ -6,26 +6,32 @@ import configMgr from './configMgr'
 import type { GitExtension, Repository, API } from '../git'
 
 export function getSingleRootPath(): string {
+  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+    return ''
+  }
   return vscode.workspace.workspaceFolders[0].uri.fsPath
 }
 
 export function isMultiRoots(): boolean {
-  return vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 1
+  return !!(vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 1)
 }
 
 export function hasRoot(): boolean {
-  return vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
+  return !!(vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0)
 }
 
 export function pathResolve(filePath: string) {
   if (isMultiRoots() || !hasRoot()) {
     return filePath
   }
+  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+    return filePath
+  }
   return path.resolve(vscode.workspace.workspaceFolders[0].uri.fsPath, filePath)
 }
 
-export function getCurrentResources(): Array<ItemInSettingsJson> {
-  const resources = (configMgr.get('resources') as Array<ItemInSettingsJson | string>) || []
+export async function getCurrentResources(): Promise<Array<ItemInSettingsJson>> {
+  const resources = (await configMgr.get('resources') as Array<ItemInSettingsJson | string>) || []
   const newResources: Array<ItemInSettingsJson> = resources.map((item) => {
     if (typeof item == 'string') {
       return { filePath: item, group: DEFAULT_GROUP } as ItemInSettingsJson
@@ -38,11 +44,11 @@ export function getCurrentResources(): Array<ItemInSettingsJson> {
 
 export function replaceArrayElements<T>(array: Array<T>, targetId: number, sourceId: number): Array<T> {
   return array.reduce(
-    (resultArray, element, id, originalArray) => [
+    (resultArray: T[], element, id, originalArray) => [
       ...resultArray,
       id === targetId ? originalArray[sourceId] : id === sourceId ? originalArray[targetId] : element,
     ],
-    []
+    [] as T[]
   )
 }
 
@@ -59,7 +65,7 @@ export function getGitApi(): API | null {
 
 export function getGitRepositories(): Repository[] | null {
   const gitApi = getGitApi()
-  if (!gitApi.repositories || !gitApi.repositories.length) {
+  if (!gitApi || !gitApi.repositories || !gitApi.repositories.length) {
     return null
   }
 

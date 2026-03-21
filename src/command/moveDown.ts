@@ -6,34 +6,44 @@ import { getCurrentResources, replaceArrayElements } from '../helper/util'
 
 export function moveDown(favoritesProvider: FavoritesProvider) {
   return vscode.commands.registerCommand('favorites.moveDown', async function (value: Resource) {
-    const config = vscode.workspace.getConfiguration('favorites')
-    const currentGroup = configMgr.get('currentGroup') as string
+    try {
+      const config = vscode.workspace.getConfiguration('favorites')
+      const currentGroup = await configMgr.get('currentGroup') as string
 
-    const items = await getCurrentResources()
-    const filteredArray: {
-      filePath: string
-      group: string
-      previousIndex: number
-    }[] = []
+      const items = await getCurrentResources()
+      const filteredArray: {
+        filePath: string
+        group: string
+        previousIndex: number
+      }[] = []
 
-    items.forEach((value, index) => {
-      if (value.group == currentGroup) {
-        filteredArray.push({ filePath: value.filePath, group: value.group, previousIndex: index })
+      items.forEach((item, index) => {
+        if (item.group === currentGroup) {
+          filteredArray.push({ filePath: item.filePath, group: item.group, previousIndex: index })
+        }
+      })
+
+      const currentItem = filteredArray.find((i) => i.filePath === value.value)
+      if (!currentItem) {
+        return
       }
-    })
 
-    const currentIndex = filteredArray.find((i) => i.filePath === value.value).previousIndex
-    const targetIndexOfFiltered = filteredArray.findIndex((i) => i.filePath === value.value)
+      const currentIndex = currentItem.previousIndex
+      const targetIndexOfFiltered = filteredArray.findIndex((i) => i.filePath === value.value)
 
-    if (currentIndex === filteredArray[filteredArray.length-1].previousIndex) {
-      return
-    }else{
-      var nextIndex = filteredArray[targetIndexOfFiltered+1].previousIndex
+      if (currentIndex === filteredArray[filteredArray.length - 1].previousIndex) {
+        return
+      }
+
+      const nextIndex = filteredArray[targetIndexOfFiltered + 1].previousIndex
+
+      let resources = replaceArrayElements(items, currentIndex, nextIndex)
+
+      await config.update('sortOrder', 'MANUAL', false)
+      await configMgr.save('resources', resources)
+    } catch (error) {
+      console.error('Error moving down:', error)
+      vscode.window.showErrorMessage('Failed to move resource down')
     }
-
-    let resources = replaceArrayElements(items, currentIndex, nextIndex)
-
-    config.update('sortOrder', 'MANUAL', false)
-    configMgr.save('resources', resources).catch(console.warn)
   })
 }

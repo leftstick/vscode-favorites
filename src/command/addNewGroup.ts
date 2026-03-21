@@ -11,35 +11,35 @@ export function addNewGroup(favoritesProvider: FavoritesProvider) {
 
     let branchName: string = 'no_git_master'
     if (isGitUsed) {
-      branchName = getGitBranchName()
+      const gitBranchName = getGitBranchName()
+      branchName = gitBranchName || branchName
     }
 
-    const previousGroups = Array.from(
-      new Set(((configMgr.get('groups') as string[]) || []).concat([DEFAULT_GROUP]))
-    )
+    const groups = (await configMgr.get('groups')) as string[]
+    const previousGroups = Array.from(new Set((groups || []).concat([DEFAULT_GROUP])))
 
     vscode.window
       .showQuickPick(
-        ['Input new group name'].concat(!isGitUsed ? [] : ['Create group with current branch name'])
+        ['Input new group name'].concat(!isGitUsed ? [] : ['Create group with current branch name']),
       )
-      .then((label) => {
+      .then(async (label) => {
         if (label == 'Input new group name') {
-          vscode.window.showInputBox({ title: 'Input a name for new group' }).then((input) => {
+          vscode.window.showInputBox({ title: 'Input a name for new group' }).then(async (input) => {
             if (input) {
-              addNewGroupInConfig(input, previousGroups)
+              await addNewGroupInConfig(input, previousGroups)
             }
           })
         } else if (label == 'Create group with current branch name') {
-          addNewGroupInConfig(branchName, previousGroups)
+          await addNewGroupInConfig(branchName, previousGroups)
         }
       })
   })
 }
 
-function addNewGroupInConfig(name: string, previousGroups: Array<string>) {
+async function addNewGroupInConfig(name: string, previousGroups: Array<string>) {
   if (previousGroups.indexOf(name) === -1) {
-    configMgr.save('groups', previousGroups.concat([name]))
-    configMgr.save('currentGroup', name)
+    await configMgr.save('groups', previousGroups.concat([name]))
+    await configMgr.save('currentGroup', name)
   } else {
     vscode.window.showErrorMessage(`The group "${name}" already exists.`)
   }

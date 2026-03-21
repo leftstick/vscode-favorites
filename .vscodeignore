@@ -1,10 +1,13 @@
 .vscode/**
 .vscode-test/**
-out/test/**
+out/**
 test/**
 src/**
 **/*.map
 .gitignore
 tsconfig.json
+esbuild.js
+package-lock.json
+yarn.lock
 vsc-extension-quickstart.md
 favorites-localization/**

@@ -2,17 +2,21 @@
   "name": "vscode-favorites",
   "displayName": "favorites",
   "description": "Mark resources (files or folders, local and remote) as favorites, so they can be easily accessed.",
-  "version": "1.11.0",
+  "version": "1.11.1",
   "publisher": "howardzuo",
   "engines": {
-    "vscode": "^1.68.0"
+    "vscode": "^1.80.0"
   },
   "scripts": {
-    "watch": "tsc -watch -p ./",
-    "build": "gulp build",
-    "pub": "gulp publish",
-    "clean": "gulp clean",
-    "pk": "gulp package"
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "compile": "npm run check-types && node esbuild.js",
+    "check-types": "tsc --noEmit",
+    "build": "npm run package",
+    "package": "npm run check-types && node esbuild.js --production && npx vsce package",
+    "pub": "vsce publish",
+    "clean": "rimraf out dist *.vsix"
   },
   "categories": [
     "Other"
@@ -33,7 +37,7 @@
     "onView:favorites-full-view"
   ],
   "license": "GPL-3.0",
-  "main": "./out/index.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "configuration": {
       "type": "object",
@@ -311,19 +315,13 @@
     ]
   },
   "devDependencies": {
-    "@types/node": "^18.11.17",
-    "@types/vscode": "^1.68.0",
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.80.0",
     "@vscode/vsce": "^2.16.0",
-    "del": "^7.0.0",
-    "event-stream": "^4.0.1",
-    "gulp": "^4.0.2",
-    "gulp-rename": "^2.0.0",
-    "gulp-sourcemaps": "^3.0.0",
-    "gulp-typescript": "^6.0.0-alpha.1",
-    "run-sequence": "^2.2.1",
-    "typescript": "^4.9.4"
+    "esbuild": "^0.18.0",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.0.0"
   },
-  "dependencies": {
-    "nconf": "^0.12.0"
-  }
+  "dependencies": {}
 }
