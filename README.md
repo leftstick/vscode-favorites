@@ -45,6 +45,75 @@ Your favorites are listed in a separate view and can be quickly accessed from th
 
 [GPL v3 License](https://raw.githubusercontent.com/leftstick/vscode-favorites/master/LICENSE)
 
+## Development
+
+### Environment Setup
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/leftstick/vscode-favorites.git
+   cd vscode-favorites
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   pnpm install
+   ```
+
+3. **Run development server**:
+   ```bash
+   pnpm run watch
+   ```
+
+4. **Launch extension**:
+   - Press `F5` in VS Code
+   - This will open a new VS Code window with the extension loaded
+
+### Build and Test
+
+1. **Build the extension**:
+   ```bash
+   pnpm run build
+   ```
+
+2. **Run tests**:
+   ```bash
+   pnpm run test
+   ```
+
+3. **Package the extension**:
+   ```bash
+   pnpm run package
+   ```
+
+### Contribution Guidelines
+
+1. **Fork the repository**
+2. **Create a feature branch**:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. **Make your changes**
+4. **Run tests** to ensure your changes don't break existing functionality
+5. **Commit your changes** with a descriptive commit message
+6. **Push to your fork**
+7. **Create a pull request**
+
+### Code Style
+
+- Follow TypeScript best practices
+- Use `async/await` for asynchronous operations
+- Add appropriate error handling
+- Write clear and concise comments
+- Maintain consistent code formatting
+
+### Development Tools
+
+- **TypeScript**: For type-safe code
+- **esbuild**: For fast builds
+- **Mocha**: For unit tests
+- **VS Code Test**: For extension integration tests
+
 [vs-url]: https://marketplace.visualstudio.com/items?itemName=howardzuo.vscode-favorites
 [vs-image]: https://img.shields.io/visual-studio-marketplace/v/howardzuo.vscode-favorites
 [install-url]: https://img.shields.io/visual-studio-marketplace/i/howardzuo.vscode-favorites

@@ -1,4 +1,5 @@
 const esbuild = require('esbuild');
+const path = require('path');
 
 const production = process.argv.includes('--production');
 const watch = process.argv.includes('--watch');
@@ -15,6 +16,15 @@ async function main() {
     outfile: 'dist/extension.js',
     external: ['vscode'],
     logLevel: 'warning',
+    // Optimization config
+    cache: true,
+    incremental: watch,
+    parallel: true,
+    // Improve build speed
+    loader: {
+      '.ts': 'ts',
+      '.js': 'js'
+    },
     plugins: [
       /* add to the end of plugins array */
       esbuildProblemMatcherPlugin

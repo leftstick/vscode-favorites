@@ -16,7 +16,8 @@
     "build": "npm run package",
     "package": "npm run check-types && node esbuild.js --production && npx vsce package",
     "pub": "vsce publish",
-    "clean": "rimraf out dist *.vsix"
+    "clean": "rimraf out dist *.vsix",
+    "test": "node --experimental-specifier-resolution=node --experimental-vm-modules node_modules/vscode-test/out/runTest.js --extensionDevelopmentPath=. --testPathPattern=src/test"
   },
   "categories": [
     "Other"
@@ -315,13 +316,18 @@
     ]
   },
   "devDependencies": {
+    "@types/chai": "^5.2.3",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.80.0",
     "@vscode/vsce": "^2.16.0",
+    "chai": "^6.2.2",
     "esbuild": "^0.18.0",
+    "mocha": "^11.7.5",
     "npm-run-all": "^4.1.5",
     "rimraf": "^5.0.0",
-    "typescript": "^5.0.0"
-  },
-  "dependencies": {}
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.0",
+    "vscode-test": "^1.6.1"
+  }
 }
