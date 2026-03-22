@@ -1,5 +1,5 @@
 import * as vscode from 'vscode'
-import { isMultiRoots, getSingleRootPath, getCurrentResources } from '../helper/util'
+import { isMultiRoots, getSingleRootPath, getCurrentResources, hasRoot } from '../helper/util'
 import configMgr from '../helper/configMgr'
 import { DEFAULT_GROUP } from '../enum'
 import { ItemInSettingsJson } from '../model'
@@ -22,7 +22,7 @@ export function addToFavorites() {
       const newResource =
         fileUri.scheme !== 'file'
           ? fileUri.toString()
-          : isMultiRoots()
+          : isMultiRoots() || !hasRoot() || !fileName.startsWith(getSingleRootPath())
           ? fileName
           : fileName.substr(getSingleRootPath().length + 1)
 

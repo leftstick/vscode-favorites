@@ -16,10 +16,6 @@ async function main() {
     outfile: 'dist/extension.js',
     external: ['vscode'],
     logLevel: 'warning',
-    // Optimization config
-    cache: true,
-    incremental: watch,
-    parallel: true,
     // Improve build speed
     loader: {
       '.ts': 'ts',

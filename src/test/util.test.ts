@@ -21,6 +21,6 @@ suite('Util Tests', () => {
   test('should get current resources', async () => {
     const resources = await getCurrentResources()
     
-    assert(Array.isArray(resources))
+    assert.strictEqual(Array.isArray(resources), true)
   })
 })

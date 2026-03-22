@@ -2,7 +2,7 @@ import * as vscode from 'vscode'
 import * as path from 'path'
 import * as os from 'os'
 
-import { getCurrentResources, isMultiRoots, pathResolve } from '../helper/util'
+import { getCurrentResources, isMultiRoots, pathResolve, resolveResourcePath } from '../helper/util'
 import configMgr from '../helper/configMgr'
 import { DEFAULT_GROUP, FileStat } from '../enum'
 import { Item, ItemInSettingsJson } from '../model'
@@ -124,12 +124,18 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
   private getResourceStat(item: ItemInSettingsJson): Thenable<Item> {
     return new Promise((resolve) => {
       let uri: vscode.Uri
-      if (item.filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:/)) {
+      // Check if it's an absolute path
+      if (path.isAbsolute(item.filePath)) {
+        // It's an absolute path, treat as file path
+        const resolvedPath = resolveResourcePath(item.filePath)
+        uri = vscode.Uri.file(resolvedPath)
+      } else if (item.filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:/)) {
         // filePath is a uri string
         uri = vscode.Uri.parse(item.filePath)
       } else {
-        // filePath is a file path
-        uri = vscode.Uri.file(pathResolve(item.filePath))
+        // filePath is a relative file path
+        const resolvedPath = resolveResourcePath(item.filePath)
+        uri = vscode.Uri.file(resolvedPath)
       }
 
       vscode.workspace.fs.stat(uri).then(
@@ -157,7 +163,33 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
             group: item.group,
           })
         },
-        () => {
+        (error) => {
+          // For external files, try to check if they exist using Node.js fs
+          try {
+            const fs = require('fs')
+            const fsPath = uri.fsPath
+            if (fs.existsSync(fsPath)) {
+              const stats = fs.statSync(fsPath)
+              if (stats.isFile()) {
+                return resolve({
+                  filePath: item.filePath,
+                  stat: FileStat.FILE,
+                  uri,
+                  group: item.group,
+                })
+              }
+              if (stats.isDirectory()) {
+                return resolve({
+                  filePath: item.filePath,
+                  stat: FileStat.DIRECTORY,
+                  uri,
+                  group: item.group,
+                })
+              }
+            }
+          } catch (e) {
+            // Ignore errors
+          }
           return resolve({
             filePath: item.filePath,
             stat: FileStat.NEITHER,

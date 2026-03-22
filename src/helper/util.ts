@@ -21,6 +21,10 @@ export function hasRoot(): boolean {
 }
 
 export function pathResolve(filePath: string) {
+  // Check if filePath is already an absolute path
+  if (path.isAbsolute(filePath) || filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:/)) {
+    return filePath
+  }
   if (isMultiRoots() || !hasRoot()) {
     return filePath
   }
@@ -30,8 +34,20 @@ export function pathResolve(filePath: string) {
   return path.resolve(vscode.workspace.workspaceFolders[0].uri.fsPath, filePath)
 }
 
+export function resolveResourcePath(filePath: string): string {
+  // Check if filePath is already an absolute path
+  if (path.isAbsolute(filePath) || filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:/)) {
+    return filePath
+  }
+  // Handle relative paths
+  if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+    return path.resolve(vscode.workspace.workspaceFolders[0].uri.fsPath, filePath)
+  }
+  return filePath
+}
+
 export async function getCurrentResources(): Promise<Array<ItemInSettingsJson>> {
-  const resources = (await configMgr.get('resources') as Array<ItemInSettingsJson | string>) || []
+  const resources = ((await configMgr.get('resources')) as Array<ItemInSettingsJson | string>) || []
   const newResources: Array<ItemInSettingsJson> = resources.map((item) => {
     if (typeof item == 'string') {
       return { filePath: item, group: DEFAULT_GROUP } as ItemInSettingsJson
@@ -48,7 +64,7 @@ export function replaceArrayElements<T>(array: Array<T>, targetId: number, sourc
       ...resultArray,
       id === targetId ? originalArray[sourceId] : id === sourceId ? originalArray[targetId] : element,
     ],
-    [] as T[]
+    [] as T[],
   )
 }
 

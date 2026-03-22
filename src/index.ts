@@ -3,6 +3,7 @@
 import * as vscode from 'vscode'
 import { FavoritesProvider } from './provider/FavoritesProvider'
 import configMgr from './helper/configMgr'
+import { resolveResourcePath } from './helper/util'
 
 import {
   addToFavorites,
@@ -57,7 +58,71 @@ export function activate(context: vscode.ExtensionContext) {
       })
     },
     undefined,
-    context.subscriptions
+    context.subscriptions,
+  )
+
+  // Listen for file rename events to update favorites
+  vscode.workspace.onDidRenameFiles(
+    async (event) => {
+      const resources = ((await configMgr.get('resources')) as Array<any>) || []
+      let updated = false
+
+      const updatedResources = resources.map((resource) => {
+        if (typeof resource === 'string') {
+          return resource
+        }
+
+        let oldPath = resolveResourcePath(resource.filePath)
+
+        // Check if this resource was renamed
+        for (const rename of event.files) {
+          if (oldPath === rename.oldUri.fsPath) {
+            updated = true
+            // Update to new path
+            if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+              return { ...resource, filePath: rename.newUri.fsPath }
+            }
+            const rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath
+            if (rename.newUri.fsPath.startsWith(rootPath)) {
+              return { ...resource, filePath: rename.newUri.fsPath.substr(rootPath.length + 1) }
+            } else {
+              return { ...resource, filePath: rename.newUri.fsPath }
+            }
+          }
+        }
+        return resource
+      })
+
+      // Check if any renamed file is inside a favorite folder
+      let folderUpdated = false
+      for (const resource of resources) {
+        if (typeof resource === 'object' && resource.filePath) {
+          let folderPath = resolveResourcePath(resource.filePath)
+
+          // Check if any renamed file is inside this folder
+          for (const rename of event.files) {
+            if (rename.oldUri.fsPath.startsWith(folderPath + require('path').sep)) {
+              folderUpdated = true
+              break
+            }
+          }
+
+          if (folderUpdated) {
+            break
+          }
+        }
+      }
+
+      if (updated) {
+        await configMgr.save('resources', updatedResources)
+        favoritesProvider.refresh()
+      } else if (folderUpdated) {
+        // Refresh if any file inside a favorite folder was renamed
+        favoritesProvider.refresh()
+      }
+    },
+    undefined,
+    context.subscriptions,
   )
 
   context.subscriptions.push(addToFavorites())
