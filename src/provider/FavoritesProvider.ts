@@ -73,7 +73,10 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
 
     // Get files.exclude configuration
     const filesExclude =
-      (vscode.workspace.getConfiguration('files').get('exclude') as Record<string, boolean>) || {}
+      (vscode.workspace.getConfiguration('files').get('exclude') as Record<
+        string,
+        boolean | { when: string }
+      >) || {}
 
     return vscode.workspace.fs
       .readDirectory(uri)
@@ -82,8 +85,24 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
         const filteredEntries = entries.filter(([name, type]) => {
           const entryPath = path.join(uri.fsPath, name)
           // Check if the file is excluded
-          for (const [pattern, exclude] of Object.entries(filesExclude)) {
-            if (exclude && this.matchesPattern(entryPath, pattern)) {
+          for (const [pattern, excludeConfig] of Object.entries(filesExclude)) {
+            let shouldExclude = false
+
+            if (typeof excludeConfig === 'boolean') {
+              shouldExclude = excludeConfig
+            } else if (typeof excludeConfig === 'object' && excludeConfig.when) {
+              // Handle when clause
+              const whenClause = excludeConfig.when
+              // Simple implementation for $(basename) variable
+              const basename = path.basename(entryPath, path.extname(entryPath))
+              const resolvedWhenClause = whenClause.replace('$(basename)', basename)
+
+              // Check if the resolved when clause matches the file path
+              const whenPattern = resolvedWhenClause
+              shouldExclude = this.matchesPattern(entryPath, whenPattern)
+            }
+
+            if (shouldExclude && this.matchesPattern(entryPath, pattern)) {
               return false
             }
           }
