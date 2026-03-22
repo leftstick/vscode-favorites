@@ -120,8 +120,8 @@ suite('FavoritesProvider Tests', () => {
         {
           uri: vscode.Uri.file('d:\\codes\\vue-memory-game'),
           name: 'vue-memory-game',
-          index: 0
-        }
+          index: 0,
+        },
       ]
 
       // Test getChildrenResources with when clause
@@ -165,8 +165,8 @@ suite('FavoritesProvider Tests', () => {
       {
         uri: vscode.Uri.file('d:\\codes\\vue-memory-game'),
         name: 'vue-memory-game',
-        index: 0
-      }
+        index: 0,
+      },
     ]
 
     try {
@@ -184,9 +184,18 @@ suite('FavoritesProvider Tests', () => {
 
       // Verify child items have relative paths
       const childPaths = children.map((child: any) => child.value)
-      assert.strictEqual(childPaths.some((path: string) => path.includes('src/assets')), true)
-      assert.strictEqual(childPaths.some((path: string) => path.includes('src/components')), true)
-      assert.strictEqual(childPaths.some((path: string) => path.includes('src/main.ts')), true)
+      assert.strictEqual(
+        childPaths.some((path: string) => path.includes('src/assets')),
+        true,
+      )
+      assert.strictEqual(
+        childPaths.some((path: string) => path.includes('src/components')),
+        true,
+      )
+      assert.strictEqual(
+        childPaths.some((path: string) => path.includes('src/main.ts')),
+        true,
+      )
     } finally {
       // Restore original methods
       if (vscode.workspace.fs.readDirectory !== undefined) {
@@ -226,5 +235,43 @@ suite('FavoritesProvider Tests', () => {
         vscode.workspace.fs.readDirectory = originalReadDirectory
       }
     }
+  })
+
+  test('should display directory name for duplicate filenames', () => {
+    const provider = new FavoritesProvider()
+
+    // Create test items with duplicate filenames in different directories
+    const testItems = [
+      {
+        filePath: 'DatePicker/index.jsx',
+        stat: 1, // FILE
+        group: 'Default',
+        uri: vscode.Uri.file('d:\\codes\\project\\DatePicker\\index.jsx'),
+      },
+      {
+        filePath: 'Calendar/index.tsx',
+        stat: 1, // FILE
+        group: 'Default',
+        uri: vscode.Uri.file('d:\\codes\\project\\Calendar\\index.tsx'),
+      },
+      {
+        filePath: 'utils.ts',
+        stat: 1, // FILE
+        group: 'Default',
+        uri: vscode.Uri.file('d:\\codes\\project\\utils.ts'),
+      },
+    ]
+
+    // Test data2Resource method with duplicate filenames
+    const resources = (provider as any).data2Resource(testItems, 'resource')
+
+    // Extract labels from resources
+    const labels = resources.map((resource: any) => resource.label)
+
+    // Verify duplicate filenames show directory name
+    assert.strictEqual(labels.includes('DatePicker/index.jsx'), true)
+    assert.strictEqual(labels.includes('Calendar/index.tsx'), true)
+    // Verify unique filename just shows filename
+    assert.strictEqual(labels.includes('utils.ts'), true)
   })
 })
