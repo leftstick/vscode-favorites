@@ -1,5 +1,10 @@
 <!--Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.-->
 
+### 2026-03-22 (1.14.0)
+
+1. Add toggle favorite command for active file (Issue #86)
+2. Add toggle folder favorite command for active file's folder (Issue #86)
+
 ### 2026-03-22 (1.13.2)
 
 1. Optimize extension package size by excluding node_modules directory

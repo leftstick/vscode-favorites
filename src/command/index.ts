@@ -1,5 +1,7 @@
 export { addToFavorites } from './addToFavorites'
 export { deleteFavorite } from './deleteFavorite'
+export { toggleFavorite } from './toggleFavorite'
+export { toggleFolderOfActiveFile } from './toggleFolderOfActiveFile'
 export { moveUp } from './moveUp'
 export { moveDown } from './moveDown'
 export { moveToTop } from './moveToTop'

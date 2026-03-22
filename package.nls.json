@@ -14,5 +14,7 @@
   "command.favorites.openToSide": "Open to the Side",
   "command.favorites.changeGroup": "Change Current Group",
   "command.favorites.newGroup": "Create New Group",
+  "command.favorites.toggleFavorite": "Toggle Favorite",
+  "command.favorites.toggleFolderOfActiveFile": "Toggle Folder of Active File",
   "view.favorites.title": "Favorites"
 }

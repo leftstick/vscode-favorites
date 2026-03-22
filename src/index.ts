@@ -9,6 +9,8 @@ import {
   addToFavorites,
   addNewGroup,
   deleteFavorite,
+  toggleFavorite,
+  toggleFolderOfActiveFile,
   moveUp,
   moveDown,
   moveToTop,
@@ -127,6 +129,8 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(addToFavorites())
   context.subscriptions.push(deleteFavorite())
+  context.subscriptions.push(toggleFavorite())
+  context.subscriptions.push(toggleFolderOfActiveFile())
   context.subscriptions.push(revealInOS_mac())
   context.subscriptions.push(revealInOS_windows())
   context.subscriptions.push(revealInOS_other())
