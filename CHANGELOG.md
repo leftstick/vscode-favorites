@@ -5,6 +5,9 @@
 1. Fix case-insensitive sorting for favorites (Issue #81)
 2. Fix file opening issue for files with special characters like '#' (Issue #77)
 3. Enhance file rename handling to automatically update favorite paths (Issue #79)
+4. Fix external file display issue and improve path resolution
+5. Add comprehensive tests for external files, path utilities, and file rename functionality
+6. Optimize esbuild configuration by removing unsupported options
 
 ### 2026-03-21
 
