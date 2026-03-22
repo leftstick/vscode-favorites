@@ -19,7 +19,17 @@ ext install howardzuo.vscode-favorites
 
 ## Usage
 
+### Add to Favorites
+
 An **Add to Favorites** command in Explorer's context menu saves links to your favorite files or folders into your _*`XYZ`*_`.code-workspace` file if you are using one, else into the `.vscode/settings.json` file of your root folder.
+
+### Toggle Favorite for Active File
+
+Use the **Toggle Favorite** command from the Command Palette (`cmd`/`ctrl` + `shift` + `p`) to quickly add or remove the currently active file from your favorites.
+
+### Toggle Folder Favorite for Active File
+
+Use the **Toggle Folder of Active File** command from the Command Palette (`cmd`/`ctrl` + `shift` + `p`) to quickly add or remove the folder containing the currently active file from your favorites.
 
 Your favorites are listed in a separate view and can be quickly accessed from there.
 
