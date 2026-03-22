@@ -2,7 +2,7 @@
   "name": "vscode-favorites",
   "displayName": "favorites",
   "description": "Mark resources (files or folders, local and remote) as favorites, so they can be easily accessed.",
-  "version": "1.11.4",
+  "version": "1.12.0",
   "publisher": "howardzuo",
   "engines": {
     "vscode": "^1.80.0"
@@ -14,7 +14,7 @@
     "compile": "npm run check-types && node esbuild.js",
     "check-types": "tsc --noEmit",
     "build": "npm run package",
-    "package": "npm run check-types && node esbuild.js --production && npx vsce package",
+    "package": "node esbuild.js --production && npx vsce package",
     "pub": "vsce publish",
     "clean": "rimraf out dist *.vsix",
     "test": "node --experimental-specifier-resolution=node --experimental-vm-modules node_modules/vscode-test/out/runTest.js --extensionDevelopmentPath=. --testPathPattern=src/test"
@@ -54,6 +54,7 @@
           "enum": [
             "ASC",
             "DESC",
+            "FILETYPE",
             "MANUAL"
           ],
           "default": "ASC",

@@ -148,25 +148,56 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
 
   private sortResources(resources: Array<ItemInSettingsJson>, sort: string): Thenable<Array<Item>> {
     return Promise.all(resources.map((r) => this.getResourceStat(r))).then((resourceStats) => {
-      const isAsc = sort === 'ASC'
-      resourceStats.sort(function (a, b) {
-        const aName = path.basename(a.filePath).toLowerCase()
-        const bName = path.basename(b.filePath).toLowerCase()
-        const aStat = a.stat
-        const bStat = b.stat
+      if (sort === 'FILETYPE') {
+        resourceStats.sort(function (a, b) {
+          const aStat = a.stat
+          const bStat = b.stat
 
-        if (aStat === FileStat.DIRECTORY && bStat === FileStat.FILE) {
-          return -1
-        }
-        if (aStat === FileStat.FILE && bStat === FileStat.DIRECTORY) {
-          return 1
-        }
+          if (aStat === FileStat.DIRECTORY && bStat === FileStat.FILE) {
+            return -1
+          }
+          if (aStat === FileStat.FILE && bStat === FileStat.DIRECTORY) {
+            return 1
+          }
 
-        if (aName < bName) {
-          return isAsc ? -1 : 1
-        }
-        return aName === bName ? 0 : isAsc ? 1 : -1
-      })
+          if (aStat === FileStat.DIRECTORY && bStat === FileStat.DIRECTORY) {
+            const aName = path.basename(a.filePath).toLowerCase()
+            const bName = path.basename(b.filePath).toLowerCase()
+            return aName.localeCompare(bName)
+          }
+
+          const aExt = path.extname(a.filePath).toLowerCase()
+          const bExt = path.extname(b.filePath).toLowerCase()
+
+          if (aExt !== bExt) {
+            return aExt.localeCompare(bExt)
+          }
+
+          const aName = path.basename(a.filePath).toLowerCase()
+          const bName = path.basename(b.filePath).toLowerCase()
+          return aName.localeCompare(bName)
+        })
+      } else {
+        const isAsc = sort === 'ASC'
+        resourceStats.sort(function (a, b) {
+          const aName = path.basename(a.filePath).toLowerCase()
+          const bName = path.basename(b.filePath).toLowerCase()
+          const aStat = a.stat
+          const bStat = b.stat
+
+          if (aStat === FileStat.DIRECTORY && bStat === FileStat.FILE) {
+            return -1
+          }
+          if (aStat === FileStat.FILE && bStat === FileStat.DIRECTORY) {
+            return 1
+          }
+
+          if (aName < bName) {
+            return isAsc ? -1 : 1
+          }
+          return aName === bName ? 0 : isAsc ? 1 : -1
+        })
+      }
       return resourceStats
     })
   }

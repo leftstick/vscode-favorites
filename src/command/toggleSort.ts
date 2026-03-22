@@ -17,6 +17,10 @@ export function toggleSort(favoritesProvider: FavoritesProvider) {
       return config.update('sortOrder', 'DESC', false)
     }
 
+    if (sort === 'DESC') {
+      return config.update('sortOrder', 'FILETYPE', false)
+    }
+
     config.update('sortOrder', 'ASC', false)
   })
 }
