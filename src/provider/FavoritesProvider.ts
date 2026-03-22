@@ -59,17 +59,37 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
     })
   }
 
-  private getChildrenResources(item: ItemInSettingsJson): Thenable<Array<Resource>> {
-    const sort = <string>vscode.workspace.getConfiguration('favorites').get('sortOrder')
-
-    let uri: vscode.Uri
-    if (item.filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:/)) {
+  private getUriFromPath(filePath: string): vscode.Uri {
+    if (filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:/)) {
       // filePath is a uri string
-      uri = vscode.Uri.parse(item.filePath)
+      return vscode.Uri.parse(filePath)
     } else {
-      // Not a uri string
-      uri = vscode.Uri.file(pathResolve(item.filePath))
+      // filePath is a file path
+      let resolvedPath: string
+      if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+        const workspacePath = vscode.workspace.workspaceFolders[0].uri.fsPath
+        // Always resolve relative to workspace root
+        resolvedPath = path.resolve(workspacePath, filePath)
+      } else {
+        // No workspace, use absolute path
+        resolvedPath = path.resolve(filePath)
+      }
+      return vscode.Uri.file(resolvedPath)
     }
+  }
+
+  private getConfig<T>(section: string, key: string, defaultValue?: T): T | undefined {
+    if (defaultValue !== undefined) {
+      return vscode.workspace.getConfiguration(section).get<T>(key, defaultValue)
+    } else {
+      return vscode.workspace.getConfiguration(section).get<T>(key)
+    }
+  }
+
+  private getChildrenResources(item: ItemInSettingsJson): Thenable<Array<Resource>> {
+    const sort = this.getConfig<string>('favorites', 'sortOrder') || 'ASC'
+
+    const uri = this.getUriFromPath(item.filePath)
 
     // Get files.exclude configuration
     const filesExclude =
@@ -117,18 +137,43 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
           }
           return true
         })
-        return this.sortResources(
-          filteredEntries.map((e) => {
-            const entryUri = vscode.Uri.joinPath(uri, e[0])
-            return { filePath: entryUri.fsPath, group: '' }
-          }),
-          sort === 'MANUAL' ? 'ASC' : sort,
-        )
+        const resources = filteredEntries.map((e) => {
+          const entryUri = vscode.Uri.joinPath(uri, e[0])
+          // Determine if the original item was a relative path
+          const isOriginalRelative =
+            !path.isAbsolute(item.filePath) && !item.filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:/)
+
+          let entryPath: string
+          if (
+            isOriginalRelative &&
+            vscode.workspace.workspaceFolders &&
+            vscode.workspace.workspaceFolders.length > 0
+          ) {
+            const workspacePath = vscode.workspace.workspaceFolders[0].uri.fsPath
+            // Use relative path based on the original item's path
+            if (item.filePath === '') {
+              // Root of workspace
+              entryPath = e[0]
+            } else {
+              // Relative to the original item
+              entryPath = path.join(item.filePath, e[0])
+            }
+          } else {
+            // Use absolute path
+            entryPath = entryUri.fsPath
+          }
+          return { filePath: entryPath, group: '' }
+        })
+        return this.sortResources(resources, sort === 'MANUAL' ? 'ASC' : sort)
       })
-      .then((items) => this.data2Resource(items, 'resourceChild'))
+      .then((items) => {
+        return this.data2Resource(items, 'resourceChild')
+      })
       .then(
-        (result) => result,
-        () => {
+        (result) => {
+          return result
+        },
+        (error) => {
           return []
         },
       )
@@ -162,7 +207,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
 
   private async getSortedFavoriteResources(): Promise<Array<ItemInSettingsJson>> {
     const resources = await getCurrentResources()
-    const sort = <string>vscode.workspace.getConfiguration('favorites').get('sortOrder')
+    const sort = this.getConfig<string>('favorites', 'sortOrder') || 'ASC'
 
     if (sort === 'MANUAL') {
       return resources
@@ -174,60 +219,97 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
     ).then((res) => res.map((r) => ({ filePath: r.filePath, group: r.group })))
   }
 
+  private compareByFileType(a: Item, b: Item): number {
+    const aStat = a.stat
+    const bStat = b.stat
+
+    if (aStat === FileStat.DIRECTORY && bStat === FileStat.FILE) {
+      return -1
+    }
+    if (aStat === FileStat.FILE && bStat === FileStat.DIRECTORY) {
+      return 1
+    }
+
+    if (aStat === FileStat.DIRECTORY && bStat === FileStat.DIRECTORY) {
+      const aName = path.basename(a.filePath).toLowerCase()
+      const bName = path.basename(b.filePath).toLowerCase()
+      return aName.localeCompare(bName)
+    }
+
+    const aExt = path.extname(a.filePath).toLowerCase()
+    const bExt = path.extname(b.filePath).toLowerCase()
+
+    if (aExt !== bExt) {
+      return aExt.localeCompare(bExt)
+    }
+
+    const aName = path.basename(a.filePath).toLowerCase()
+    const bName = path.basename(b.filePath).toLowerCase()
+    return aName.localeCompare(bName)
+  }
+
+  private compareByName(a: Item, b: Item, isAsc: boolean): number {
+    const aName = path.basename(a.filePath).toLowerCase()
+    const bName = path.basename(b.filePath).toLowerCase()
+    const aStat = a.stat
+    const bStat = b.stat
+
+    if (aStat === FileStat.DIRECTORY && bStat === FileStat.FILE) {
+      return -1
+    }
+    if (aStat === FileStat.FILE && bStat === FileStat.DIRECTORY) {
+      return 1
+    }
+
+    if (aName < bName) {
+      return isAsc ? -1 : 1
+    }
+    return aName === bName ? 0 : isAsc ? 1 : -1
+  }
+
   private sortResources(resources: Array<ItemInSettingsJson>, sort: string): Thenable<Array<Item>> {
     return Promise.all(resources.map((r) => this.getResourceStat(r))).then((resourceStats) => {
       if (sort === 'FILETYPE') {
-        resourceStats.sort(function (a, b) {
-          const aStat = a.stat
-          const bStat = b.stat
-
-          if (aStat === FileStat.DIRECTORY && bStat === FileStat.FILE) {
-            return -1
-          }
-          if (aStat === FileStat.FILE && bStat === FileStat.DIRECTORY) {
-            return 1
-          }
-
-          if (aStat === FileStat.DIRECTORY && bStat === FileStat.DIRECTORY) {
-            const aName = path.basename(a.filePath).toLowerCase()
-            const bName = path.basename(b.filePath).toLowerCase()
-            return aName.localeCompare(bName)
-          }
-
-          const aExt = path.extname(a.filePath).toLowerCase()
-          const bExt = path.extname(b.filePath).toLowerCase()
-
-          if (aExt !== bExt) {
-            return aExt.localeCompare(bExt)
-          }
-
-          const aName = path.basename(a.filePath).toLowerCase()
-          const bName = path.basename(b.filePath).toLowerCase()
-          return aName.localeCompare(bName)
-        })
+        resourceStats.sort((a, b) => this.compareByFileType(a, b))
       } else {
         const isAsc = sort === 'ASC'
-        resourceStats.sort(function (a, b) {
-          const aName = path.basename(a.filePath).toLowerCase()
-          const bName = path.basename(b.filePath).toLowerCase()
-          const aStat = a.stat
-          const bStat = b.stat
-
-          if (aStat === FileStat.DIRECTORY && bStat === FileStat.FILE) {
-            return -1
-          }
-          if (aStat === FileStat.FILE && bStat === FileStat.DIRECTORY) {
-            return 1
-          }
-
-          if (aName < bName) {
-            return isAsc ? -1 : 1
-          }
-          return aName === bName ? 0 : isAsc ? 1 : -1
-        })
+        resourceStats.sort((a, b) => this.compareByName(a, b, isAsc))
       }
       return resourceStats
     })
+  }
+
+  private checkExternalFile(uri: vscode.Uri, item: ItemInSettingsJson): Item {
+    try {
+      const fs = require('fs')
+      const fsPath = uri.fsPath
+      if (fs.existsSync(fsPath)) {
+        const stats = fs.statSync(fsPath)
+        if (stats.isFile()) {
+          return {
+            filePath: item.filePath,
+            stat: FileStat.FILE,
+            uri,
+            group: item.group,
+          }
+        }
+        if (stats.isDirectory()) {
+          return {
+            filePath: item.filePath,
+            stat: FileStat.DIRECTORY,
+            uri,
+            group: item.group,
+          }
+        }
+      }
+    } catch (e) {
+      // Ignore errors
+    }
+    return {
+      filePath: item.filePath,
+      stat: FileStat.NEITHER,
+      group: item.group,
+    }
   }
 
   private getResourceStat(item: ItemInSettingsJson): Thenable<Item> {
@@ -274,101 +356,52 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
         },
         (error) => {
           // For external files, try to check if they exist using Node.js fs
-          try {
-            const fs = require('fs')
-            const fsPath = uri.fsPath
-            if (fs.existsSync(fsPath)) {
-              const stats = fs.statSync(fsPath)
-              if (stats.isFile()) {
-                return resolve({
-                  filePath: item.filePath,
-                  stat: FileStat.FILE,
-                  uri,
-                  group: item.group,
-                })
-              }
-              if (stats.isDirectory()) {
-                return resolve({
-                  filePath: item.filePath,
-                  stat: FileStat.DIRECTORY,
-                  uri,
-                  group: item.group,
-                })
-              }
-            }
-          } catch (e) {
-            // Ignore errors
-          }
-          return resolve({
-            filePath: item.filePath,
-            stat: FileStat.NEITHER,
-            group: item.group,
-          })
+          return resolve(this.checkExternalFile(uri, item))
         },
       )
     })
   }
 
-  private data2Resource(data: Array<Item>, contextValue: string): Array<Resource> {
-    const enablePreview = <boolean>vscode.workspace.getConfiguration('workbench.editor').get('enablePreview')
+  private createResource(item: Item, contextValue: string): Resource {
+    const uri = item.uri || vscode.Uri.file(resolveResourcePath(item.filePath))
+    const isDirectory = item.stat === FileStat.DIRECTORY
+    const collapsibleState = isDirectory
+      ? vscode.TreeItemCollapsibleState.Collapsed
+      : vscode.TreeItemCollapsibleState.None
 
+    let finalContextValue = contextValue
+    if (item.uri) {
+      finalContextValue = 'uri.' + contextValue
+    }
+    if (isDirectory) {
+      finalContextValue += '.dir'
+    }
+
+    const command = isDirectory
+      ? undefined
+      : {
+          command: 'favorites.open',
+          title: '',
+          arguments: [uri],
+        }
+
+    return new Resource(
+      path.basename(item.filePath),
+      collapsibleState,
+      item.filePath,
+      finalContextValue,
+      command,
+      uri,
+    )
+  }
+
+  private data2Resource(data: Array<Item>, contextValue: string): Array<Resource> {
     // contextValue set on Resource gets a 'uri.' prefix if the favorite is specified as a uri,
     //   and a '.dir' suffix if it represents a directory rather than a file.
     // The when-clauses on our contributions to the 'view/item/context' menu use these modifiers
     //   to be smarter about which commands to offer.
 
-    return data.map((i) => {
-      if (!i.uri) {
-        const resolvedPath = resolveResourcePath(i.filePath)
-        const uri = vscode.Uri.file(resolvedPath)
-        if (i.stat === FileStat.DIRECTORY) {
-          return new Resource(
-            path.basename(i.filePath),
-            vscode.TreeItemCollapsibleState.Collapsed,
-            i.filePath,
-            contextValue + '.dir',
-            undefined,
-            uri,
-          )
-        }
-
-        return new Resource(
-          path.basename(i.filePath),
-          vscode.TreeItemCollapsibleState.None,
-          i.filePath,
-          contextValue,
-          {
-            command: 'favorites.open',
-            title: '',
-            arguments: [uri],
-          },
-          uri,
-        )
-      } else {
-        if (i.stat === FileStat.DIRECTORY) {
-          return new Resource(
-            path.basename(i.filePath),
-            vscode.TreeItemCollapsibleState.Collapsed,
-            i.filePath,
-            'uri.' + contextValue + '.dir',
-            undefined,
-            i.uri,
-          )
-        }
-        return new Resource(
-          path.basename(i.filePath),
-          vscode.TreeItemCollapsibleState.None,
-          i.filePath,
-          'uri.' + contextValue,
-          {
-            command: 'favorites.open',
-            title: '',
-            arguments: [i.uri],
-          },
-          i.uri,
-        )
-      }
-    })
+    return data.map((item) => this.createResource(item, contextValue))
   }
 }
 

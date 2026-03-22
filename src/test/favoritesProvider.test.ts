@@ -114,6 +114,16 @@ suite('FavoritesProvider Tests', () => {
         ])
       }
 
+      // Mock vscode.workspace.workspaceFolders
+      const originalWorkspaceFolders = vscode.workspace.workspaceFolders
+      vscode.workspace.workspaceFolders = [
+        {
+          uri: vscode.Uri.file('d:\\codes\\vue-memory-game'),
+          name: 'vue-memory-game',
+          index: 0
+        }
+      ]
+
       // Test getChildrenResources with when clause
       const testItem = { filePath: 'src', group: 'Default' }
       const children = await (provider as any).getChildrenResources(testItem)
@@ -130,6 +140,88 @@ suite('FavoritesProvider Tests', () => {
       // Restore original methods
       fs.existsSync = originalExistsSync
       vscode.workspace.getConfiguration = originalGetConfiguration
+      if (vscode.workspace.fs.readDirectory !== undefined) {
+        vscode.workspace.fs.readDirectory = originalReadDirectory
+      }
+    }
+  })
+
+  test('should handle relative paths correctly', async () => {
+    const provider = new FavoritesProvider()
+
+    // Mock vscode.workspace.fs.readDirectory to return our test files
+    const originalReadDirectory = vscode.workspace.fs.readDirectory
+    vscode.workspace.fs.readDirectory = (uri: vscode.Uri) => {
+      return Promise.resolve([
+        ['assets', vscode.FileType.Directory],
+        ['components', vscode.FileType.Directory],
+        ['main.ts', vscode.FileType.File],
+      ])
+    }
+
+    // Mock vscode.workspace.workspaceFolders
+    const originalWorkspaceFolders = vscode.workspace.workspaceFolders
+    vscode.workspace.workspaceFolders = [
+      {
+        uri: vscode.Uri.file('d:\\codes\\vue-memory-game'),
+        name: 'vue-memory-game',
+        index: 0
+      }
+    ]
+
+    try {
+      // Test getChildrenResources with relative path
+      const testItem = { filePath: 'src', group: 'Default' }
+      const children = await (provider as any).getChildrenResources(testItem)
+
+      // Extract file names from children
+      const fileNames = children.map((child: any) => child.label)
+
+      // Verify all items are included
+      assert.strictEqual(fileNames.includes('assets'), true)
+      assert.strictEqual(fileNames.includes('components'), true)
+      assert.strictEqual(fileNames.includes('main.ts'), true)
+
+      // Verify child items have relative paths
+      const childPaths = children.map((child: any) => child.value)
+      assert.strictEqual(childPaths.some((path: string) => path.includes('src/assets')), true)
+      assert.strictEqual(childPaths.some((path: string) => path.includes('src/components')), true)
+      assert.strictEqual(childPaths.some((path: string) => path.includes('src/main.ts')), true)
+    } finally {
+      // Restore original methods
+      if (vscode.workspace.fs.readDirectory !== undefined) {
+        vscode.workspace.fs.readDirectory = originalReadDirectory
+      }
+    }
+  })
+
+  test('should handle absolute paths correctly', async () => {
+    const provider = new FavoritesProvider()
+
+    // Mock vscode.workspace.fs.readDirectory to return our test files
+    const originalReadDirectory = vscode.workspace.fs.readDirectory
+    vscode.workspace.fs.readDirectory = (uri: vscode.Uri) => {
+      return Promise.resolve([
+        ['assets', vscode.FileType.Directory],
+        ['components', vscode.FileType.Directory],
+        ['main.ts', vscode.FileType.File],
+      ])
+    }
+
+    try {
+      // Test getChildrenResources with absolute path
+      const testItem = { filePath: 'd:\\codes\\vue-memory-game\\src', group: 'Default' }
+      const children = await (provider as any).getChildrenResources(testItem)
+
+      // Extract file names from children
+      const fileNames = children.map((child: any) => child.label)
+
+      // Verify all items are included
+      assert.strictEqual(fileNames.includes('assets'), true)
+      assert.strictEqual(fileNames.includes('components'), true)
+      assert.strictEqual(fileNames.includes('main.ts'), true)
+    } finally {
+      // Restore original methods
       if (vscode.workspace.fs.readDirectory !== undefined) {
         vscode.workspace.fs.readDirectory = originalReadDirectory
       }
