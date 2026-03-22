@@ -3,6 +3,7 @@
 ### 2026-03-22 (1.12.0)
 
 1. Add FILETYPE sorting option to sort favorites by file type (Issue #53)
+2. Fix files.exclude not working with when clause (Issue #20)
 
 ### 2026-03-22
 
