@@ -11,3 +11,4 @@ package-lock.json
 yarn.lock
 vsc-extension-quickstart.md
 favorites-localization/**
+node_modules/**

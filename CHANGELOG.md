@@ -1,5 +1,9 @@
 <!--Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.-->
 
+### 2026-03-22 (1.13.2)
+
+1. Optimize extension package size by excluding node_modules directory
+
 ### 2026-03-22 (1.13.1)
 
 1. Display directory name for duplicate filenames in favorites panel (Issue #56)
