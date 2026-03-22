@@ -1,5 +1,11 @@
 <!--Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.-->
 
+### 2026-03-22
+
+1. Fix case-insensitive sorting for favorites (Issue #81)
+2. Fix file opening issue for files with special characters like '#' (Issue #77)
+3. Enhance file rename handling to automatically update favorite paths (Issue #79)
+
 ### 2026-03-21
 
 1. Modernize build system: Replace Gulp with esbuild for faster builds

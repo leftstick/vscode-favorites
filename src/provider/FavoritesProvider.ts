@@ -100,8 +100,8 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
     return Promise.all(resources.map((r) => this.getResourceStat(r))).then((resourceStats) => {
       const isAsc = sort === 'ASC'
       resourceStats.sort(function (a, b) {
-        const aName = path.basename(a.filePath)
-        const bName = path.basename(b.filePath)
+        const aName = path.basename(a.filePath).toLowerCase()
+        const bName = path.basename(b.filePath).toLowerCase()
         const aStat = a.stat
         const bStat = b.stat
 
@@ -210,10 +210,8 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
 
     return data.map((i) => {
       if (!i.uri) {
-        let uri = vscode.Uri.parse(`file://${pathResolve(i.filePath)}`)
-        if (os.platform().startsWith('win')) {
-          uri = vscode.Uri.parse(`file:///${pathResolve(i.filePath)}`.replace(/\\/g, '/'))
-        }
+        const resolvedPath = resolveResourcePath(i.filePath)
+        const uri = vscode.Uri.file(resolvedPath)
         if (i.stat === FileStat.DIRECTORY) {
           return new Resource(
             path.basename(i.filePath),
