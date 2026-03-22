@@ -14,6 +14,15 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
   // Use for detecting doubleclick
   public lastOpened: { uri: vscode.Uri; date: Date } | undefined
 
+  constructor() {
+    // Listen for changes to files.exclude configuration
+    vscode.workspace.onDidChangeConfiguration((event) => {
+      if (event.affectsConfiguration('files.exclude')) {
+        this.refresh()
+      }
+    })
+  }
+
   refresh(element?: Resource): void {
     if (element) {
       // Incremental update, only update the specified element
@@ -62,17 +71,32 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
       uri = vscode.Uri.file(pathResolve(item.filePath))
     }
 
+    // Get files.exclude configuration
+    const filesExclude =
+      (vscode.workspace.getConfiguration('files').get('exclude') as Record<string, boolean>) || {}
+
     return vscode.workspace.fs
       .readDirectory(uri)
-      .then((entries) =>
-        this.sortResources(
-          entries.map((e) => {
+      .then((entries) => {
+        // Filter out files excluded by files.exclude
+        const filteredEntries = entries.filter(([name, type]) => {
+          const entryPath = path.join(uri.fsPath, name)
+          // Check if the file is excluded
+          for (const [pattern, exclude] of Object.entries(filesExclude)) {
+            if (exclude && this.matchesPattern(entryPath, pattern)) {
+              return false
+            }
+          }
+          return true
+        })
+        return this.sortResources(
+          filteredEntries.map((e) => {
             const entryUri = vscode.Uri.joinPath(uri, e[0])
             return { filePath: entryUri.fsPath, group: '' }
           }),
           sort === 'MANUAL' ? 'ASC' : sort,
-        ),
-      )
+        )
+      })
       .then((items) => this.data2Resource(items, 'resourceChild'))
       .then(
         (result) => result,
@@ -80,6 +104,32 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
           return []
         },
       )
+  }
+
+  private matchesPattern(filePath: string, pattern: string): boolean {
+    // Convert Windows path separators to forward slashes
+    const normalizedFilePath = filePath.replace(/\\/g, '/')
+
+    // Convert pattern to regex
+    let regexPattern = pattern.replace(/\./g, '\\.').replace(/\*/g, '.*').replace(/\?/g, '.')
+
+    // Handle ** patterns
+    regexPattern = regexPattern.replace(/\*\*\//g, '(.*/)?')
+    regexPattern = regexPattern.replace(/\*\*/g, '.*')
+
+    // For patterns that don't start with /, make them match anywhere in the path
+    if (!pattern.startsWith('/')) {
+      regexPattern = regexPattern.replace(/^\^/, '')
+      regexPattern = '.*' + regexPattern
+    }
+
+    // Add end anchor if it doesn't have one
+    if (!regexPattern.endsWith('$')) {
+      regexPattern = regexPattern + '$'
+    }
+
+    const regex = new RegExp(regexPattern)
+    return regex.test(normalizedFilePath)
   }
 
   private async getSortedFavoriteResources(): Promise<Array<ItemInSettingsJson>> {

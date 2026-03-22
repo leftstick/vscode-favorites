@@ -8,6 +8,8 @@
 4. Fix external file display issue and improve path resolution
 5. Add comprehensive tests for external files, path utilities, and file rename functionality
 6. Optimize esbuild configuration by removing unsupported options
+7. Fix issue where favorites couldn't be added when drive is selected as workspace (Issue #76)
+8. Fix issue where favorites don't respect files.exclude configuration (Issue #66)
 
 ### 2026-03-21
 

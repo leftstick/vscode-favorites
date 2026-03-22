@@ -19,14 +19,17 @@ export function addToFavorites() {
       const previousResources = await getCurrentResources()
 
       // Store the stringified uri for any resource that isn't a file
+      const rootPath = getSingleRootPath()
       const newResource =
         fileUri.scheme !== 'file'
           ? fileUri.toString()
-          : isMultiRoots() || !hasRoot() || !fileName.startsWith(getSingleRootPath())
-          ? fileName
-          : fileName.substr(getSingleRootPath().length + 1)
+          : isMultiRoots() || !hasRoot() || !fileName.toLowerCase().startsWith(rootPath.toLowerCase())
+            ? fileName
+            : rootPath.endsWith('/') || rootPath.endsWith('\\')
+              ? fileName.substr(rootPath.length)
+              : fileName.substr(rootPath.length + 1)
 
-      const currentGroup = (await configMgr.get('currentGroup') as string) || DEFAULT_GROUP
+      const currentGroup = ((await configMgr.get('currentGroup')) as string) || DEFAULT_GROUP
 
       if (previousResources.some((r) => r.filePath === newResource && r.group === currentGroup)) {
         return
@@ -36,10 +39,10 @@ export function addToFavorites() {
         'resources',
         previousResources.concat([
           { filePath: newResource, group: currentGroup },
-        ] as Array<ItemInSettingsJson>)
+        ] as Array<ItemInSettingsJson>),
       )
 
-      const groups = await configMgr.get('groups') as string[]
+      const groups = (await configMgr.get('groups')) as string[]
       if (!groups || groups.length === 0) {
         await configMgr.save('groups', [DEFAULT_GROUP])
       }
