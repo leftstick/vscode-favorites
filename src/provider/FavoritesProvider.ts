@@ -95,11 +95,20 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
               const whenClause = excludeConfig.when
               // Simple implementation for $(basename) variable
               const basename = path.basename(entryPath, path.extname(entryPath))
+              const extension = path.extname(entryPath)
               const resolvedWhenClause = whenClause.replace('$(basename)', basename)
 
-              // Check if the resolved when clause matches the file path
-              const whenPattern = resolvedWhenClause
-              shouldExclude = this.matchesPattern(entryPath, whenPattern)
+              // For when clause, we need to check if the referenced file exists
+              // e.g., "when": "$(basename).ts" means check if basename.ts exists
+              const whenFilePath = path.join(path.dirname(entryPath), resolvedWhenClause)
+
+              // Check if the referenced file exists
+              try {
+                const fs = require('fs')
+                shouldExclude = fs.existsSync(whenFilePath)
+              } catch (e) {
+                shouldExclude = false
+              }
             }
 
             if (shouldExclude && this.matchesPattern(entryPath, pattern)) {
