@@ -167,6 +167,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
         return this.sortResources(resources, sort === 'MANUAL' ? 'ASC' : sort)
       })
       .then((items) => {
+        // For resource children, we don't need to handle duplicates as they're in different directories
         return this.data2Resource(items, 'resourceChild')
       })
       .then(
@@ -362,7 +363,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
     })
   }
 
-  private createResource(item: Item, contextValue: string): Resource {
+  private createResource(item: Item, contextValue: string, fileNameCounts?: Map<string, number>): Resource {
     const uri = item.uri || vscode.Uri.file(resolveResourcePath(item.filePath))
     const isDirectory = item.stat === FileStat.DIRECTORY
     const collapsibleState = isDirectory
@@ -385,14 +386,19 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
           arguments: [uri],
         }
 
-    return new Resource(
-      path.basename(item.filePath),
-      collapsibleState,
-      item.filePath,
-      finalContextValue,
-      command,
-      uri,
-    )
+    // Generate label with directory information for duplicate filenames
+    let label = path.basename(item.filePath)
+    if (!isDirectory && fileNameCounts) {
+      const fileName = path.basename(item.filePath)
+      if (fileNameCounts.get(fileName) && fileNameCounts.get(fileName)! > 1) {
+        const dirName = path.basename(path.dirname(item.filePath))
+        if (dirName && dirName !== '.') {
+          label = `${dirName}/${fileName}`
+        }
+      }
+    }
+
+    return new Resource(label, collapsibleState, item.filePath, finalContextValue, command, uri)
   }
 
   private data2Resource(data: Array<Item>, contextValue: string): Array<Resource> {
@@ -401,7 +407,16 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
     // The when-clauses on our contributions to the 'view/item/context' menu use these modifiers
     //   to be smarter about which commands to offer.
 
-    return data.map((item) => this.createResource(item, contextValue))
+    // Count occurrences of each filename to detect duplicates
+    const fileNameCounts = new Map<string, number>()
+    data.forEach((item) => {
+      if (item.stat === FileStat.FILE) {
+        const fileName = path.basename(item.filePath)
+        fileNameCounts.set(fileName, (fileNameCounts.get(fileName) || 0) + 1)
+      }
+    })
+
+    return data.map((item) => this.createResource(item, contextValue, fileNameCounts))
   }
 }
 
