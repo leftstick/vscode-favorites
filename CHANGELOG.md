@@ -1,5 +1,9 @@
 <!--Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.-->
 
+### 2026-03-22 (1.12.1)
+
+1. Fix files.exclude with when clause logic (Issue #20)
+
 ### 2026-03-22 (1.12.0)
 
 1. Add FILETYPE sorting option to sort favorites by file type (Issue #53)
