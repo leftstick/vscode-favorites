@@ -1,5 +1,10 @@
 <!--Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.-->
 
+### 2026-03-23 (1.15.0)
+
+1. Add drag and drop support for reordering favorites within the panel
+2. Add support for dragging files from editor tabs and explorer to favorites panel (Issue #44)
+
 ### 2026-03-22 (1.14.0)
 
 1. Add toggle favorite command for active file (Issue #86)

@@ -7,12 +7,18 @@ import configMgr from '../helper/configMgr'
 import { DEFAULT_GROUP, FileStat } from '../enum'
 import { Item, ItemInSettingsJson } from '../model'
 
-export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
+export class FavoritesProvider
+  implements vscode.TreeDataProvider<Resource>, vscode.TreeDragAndDropController<Resource>
+{
   private _onDidChangeTreeData = new vscode.EventEmitter<Resource | void>()
   readonly onDidChangeTreeData: vscode.Event<Resource | void> = this._onDidChangeTreeData.event
 
   // Use for detecting doubleclick
   public lastOpened: { uri: vscode.Uri; date: Date } | undefined
+
+  // Drag and drop mime types
+  readonly dragMimeTypes = ['resource']
+  readonly dropMimeTypes = ['resource', 'application/vnd.code.tree.uri', 'text/uri-list', 'text/plain']
 
   constructor() {
     // Listen for changes to files.exclude configuration
@@ -417,6 +423,97 @@ export class FavoritesProvider implements vscode.TreeDataProvider<Resource> {
     })
 
     return data.map((item) => this.createResource(item, contextValue, fileNameCounts))
+  }
+
+  handleDrag(
+    source: readonly Resource[],
+    dataTransfer: vscode.DataTransfer,
+    token: vscode.CancellationToken,
+  ): void {
+    dataTransfer.set(
+      'resource',
+      new vscode.DataTransferItem(JSON.stringify(source.map((item) => item.value))),
+    )
+  }
+
+  async handleDrop(
+    target: Resource | undefined,
+    source: vscode.DataTransfer,
+    token: vscode.CancellationToken,
+  ): Promise<void> {
+    try {
+      let sourcePaths: string[] = []
+
+      // Check if dragging from within favorites (internal drag)
+      const resourceData = source.get('resource')
+      if (resourceData) {
+        sourcePaths = JSON.parse(await resourceData.asString()) as string[]
+      }
+      // Check if dragging from editor tab or explorer (external drag)
+      else {
+        const uriData = source.get('application/vnd.code.tree.uri')
+        if (uriData) {
+          const uriString = await uriData.asString()
+          const uri = vscode.Uri.parse(uriString)
+          sourcePaths = [uri.fsPath]
+        } else {
+          // Try other common URI formats
+          const textData = source.get('text/uri-list')
+          if (textData) {
+            const text = await textData.asString()
+            const uris = text.split('\n').filter((line) => line.trim())
+            sourcePaths = uris.map((uriStr) => vscode.Uri.parse(uriStr).fsPath)
+          }
+        }
+      }
+
+      if (!sourcePaths.length) {
+        return
+      }
+
+      const currentResources = await getCurrentResources()
+      const currentGroup = ((await configMgr.get('currentGroup')) as string) || DEFAULT_GROUP
+
+      // Filter resources to only those in the current group
+      const currentGroupResources = currentResources.filter((item) => item.group === currentGroup)
+      const otherGroupResources = currentResources.filter((item) => item.group !== currentGroup)
+
+      // Remove source items from current group resources (for internal drag)
+      const remainingResources = currentGroupResources.filter((item) => !sourcePaths.includes(item.filePath))
+
+      // Determine insertion point
+      let insertIndex = remainingResources.length
+      if (target) {
+        const targetIndex = remainingResources.findIndex((item) => item.filePath === target.value)
+        if (targetIndex !== -1) {
+          insertIndex = targetIndex
+        }
+      }
+
+      // Create new items for source paths
+      const sourceItems = sourcePaths.map((filePath) => ({
+        filePath,
+        group: currentGroup,
+      }))
+
+      // Insert source items at the determined position
+      const newResources = [
+        ...remainingResources.slice(0, insertIndex),
+        ...sourceItems,
+        ...remainingResources.slice(insertIndex),
+        ...otherGroupResources,
+      ]
+
+      // Update the configuration
+      await configMgr.save('resources', newResources)
+      // Set sort order to MANUAL when drag and drop occurs
+      await configMgr.save('sortOrder', 'MANUAL')
+
+      // Refresh the tree view
+      this.refresh()
+    } catch (error) {
+      console.error('Error handling drop:', error)
+    }
   }
 }
 

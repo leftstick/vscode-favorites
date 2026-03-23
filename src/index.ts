@@ -41,10 +41,11 @@ export function activate(context: vscode.ExtensionContext) {
     favoritesProvider.refresh()
   })
 
-  vscode.window.createTreeView('favorites', { treeDataProvider: favoritesProvider, showCollapseAll: true })
+  vscode.window.createTreeView('favorites', { treeDataProvider: favoritesProvider, showCollapseAll: true, dragAndDropController: favoritesProvider })
   const tree = vscode.window.createTreeView('favorites-full-view', {
     treeDataProvider: favoritesProvider,
     showCollapseAll: true,
+    dragAndDropController: favoritesProvider
   })
 
   // Set initial group message

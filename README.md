@@ -31,6 +31,19 @@ Use the **Toggle Favorite** command from the Command Palette (`cmd`/`ctrl` + `sh
 
 Use the **Toggle Folder of Active File** command from the Command Palette (`cmd`/`ctrl` + `shift` + `p`) to quickly add or remove the folder containing the currently active file from your favorites.
 
+### Drag and Drop Support
+
+#### Reordering Favorites
+
+You can reorder favorites within the favorites panel by dragging and dropping them to your desired position. The sort order will automatically switch to "MANUAL" when you start dragging.
+
+#### Adding Files via Drag and Drop
+
+You can also add files to your favorites by dragging them from:
+
+- **Editor tabs**: Drag the tab of an open file directly into the favorites panel
+- **Explorer**: Drag files or folders from the Explorer view into the favorites panel
+
 Your favorites are listed in a separate view and can be quickly accessed from there.
 
 ### Configuration
@@ -60,17 +73,20 @@ Your favorites are listed in a separate view and can be quickly accessed from th
 ### Environment Setup
 
 1. **Clone the repository**:
+
    ```bash
    git clone https://github.com/leftstick/vscode-favorites.git
    cd vscode-favorites
    ```
 
 2. **Install dependencies**:
+
    ```bash
    pnpm install
    ```
 
 3. **Run development server**:
+
    ```bash
    pnpm run watch
    ```
@@ -82,11 +98,13 @@ Your favorites are listed in a separate view and can be quickly accessed from th
 ### Build and Test
 
 1. **Build the extension**:
+
    ```bash
    pnpm run build
    ```
 
 2. **Run tests**:
+
    ```bash
    pnpm run test
    ```
