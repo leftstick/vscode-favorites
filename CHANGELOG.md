@@ -1,5 +1,10 @@
 <!--Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.-->
 
+### 2026-03-24 (1.15.1)
+
+1. Add group selection when adding to favorites (right-click context menu)
+2. Fix type error in GroupCommandProvider
+
 ### 2026-03-23 (1.15.0)
 
 1. Add drag and drop support for reordering favorites within the panel
