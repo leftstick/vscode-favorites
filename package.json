@@ -334,6 +334,10 @@
       {
         "command": "favorites.toggleFolderOfActiveFile",
         "title": "%command.favorites.toggleFolderOfActiveFile%"
+      },
+      {
+        "command": "favorites.addToFavoritesGroup",
+        "title": "%command.favorites.addtofavorites%"
       }
     ]
   },
