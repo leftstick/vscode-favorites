@@ -107,7 +107,13 @@
       "editor/context": [
         {
           "command": "favorites.addToFavorites",
-          "group": "favorites"
+          "group": "favorites",
+          "when": "config.favorites.groups.length <= 1"
+        },
+        {
+          "command": "favorites.addToFavoritesGroup",
+          "group": "favorites",
+          "when": "config.favorites.groups.length > 1"
         },
         {
           "command": "favorites.deleteFavorite",
@@ -117,7 +123,13 @@
       "explorer/context": [
         {
           "command": "favorites.addToFavorites",
-          "group": "favorites"
+          "group": "favorites",
+          "when": "config.favorites.groups.length <= 1"
+        },
+        {
+          "command": "favorites.addToFavoritesGroup",
+          "group": "favorites",
+          "when": "config.favorites.groups.length > 1"
         }
       ],
       "view/title": [

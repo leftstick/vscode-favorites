@@ -2,11 +2,13 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode'
 import { FavoritesProvider } from './provider/FavoritesProvider'
+import { GroupCommandProvider } from './provider/GroupCommandProvider'
 import configMgr from './helper/configMgr'
 import { resolveResourcePath } from './helper/util'
 
 import {
   addToFavorites,
+  addToFavoritesGroup,
   addNewGroup,
   deleteFavorite,
   toggleFavorite,
@@ -36,16 +38,24 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.commands.executeCommand('setContext', 'ext:allFavoriteViews', ['favorites', 'favorites-full-view'])
 
   const favoritesProvider = new FavoritesProvider()
+  const groupCommandProvider = new GroupCommandProvider()
 
   configMgr.onConfigChange(() => {
     favoritesProvider.refresh()
   })
 
-  vscode.window.createTreeView('favorites', { treeDataProvider: favoritesProvider, showCollapseAll: true, dragAndDropController: favoritesProvider })
+  // Add to context subscriptions
+  context.subscriptions.push(groupCommandProvider)
+
+  vscode.window.createTreeView('favorites', {
+    treeDataProvider: favoritesProvider,
+    showCollapseAll: true,
+    dragAndDropController: favoritesProvider,
+  })
   const tree = vscode.window.createTreeView('favorites-full-view', {
     treeDataProvider: favoritesProvider,
     showCollapseAll: true,
-    dragAndDropController: favoritesProvider
+    dragAndDropController: favoritesProvider,
   })
 
   // Set initial group message
@@ -129,6 +139,7 @@ export function activate(context: vscode.ExtensionContext) {
   )
 
   context.subscriptions.push(addToFavorites())
+  context.subscriptions.push(addToFavoritesGroup())
   context.subscriptions.push(deleteFavorite())
   context.subscriptions.push(toggleFavorite())
   context.subscriptions.push(toggleFolderOfActiveFile())

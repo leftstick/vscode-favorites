@@ -1,4 +1,5 @@
 export { addToFavorites } from './addToFavorites'
+export { addToFavoritesGroup } from './addToFavoritesGroup'
 export { deleteFavorite } from './deleteFavorite'
 export { toggleFavorite } from './toggleFavorite'
 export { toggleFolderOfActiveFile } from './toggleFolderOfActiveFile'
