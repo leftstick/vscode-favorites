@@ -66,7 +66,10 @@ export class FavoritesProvider
   }
 
   private getUriFromPath(filePath: string): vscode.Uri {
-    if (filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:/)) {
+    // Windows absolute paths (e.g. C:\foo or C:/foo) must go through Uri.file(),
+    // not Uri.parse() — the drive letter matches the URI scheme regex but is not a URI.
+    const isWindowsAbsolute = /^[A-Za-z]:[/\\]/.test(filePath)
+    if (!isWindowsAbsolute && filePath.match(/^[A-Za-z][A-Za-z0-9+-.]*:/)) {
       // filePath is a uri string
       return vscode.Uri.parse(filePath)
     } else {
@@ -338,7 +341,9 @@ export class FavoritesProvider
 
       vscode.workspace.fs.stat(uri).then(
         (fileStat) => {
-          if (fileStat.type === vscode.FileType.File) {
+          // FileType is a bitmask — use & not === so symlinks (e.g. FileType.SymbolicLink | FileType.Directory)
+          // are matched correctly. See https://code.visualstudio.com/api/references/vscode-api#FileType
+          if (fileStat.type & vscode.FileType.File) {
             return resolve({
               filePath: item.filePath,
               stat: FileStat.FILE,
@@ -346,7 +351,7 @@ export class FavoritesProvider
               group: item.group,
             })
           }
-          if (fileStat.type === vscode.FileType.Directory) {
+          if (fileStat.type & vscode.FileType.Directory) {
             return resolve({
               filePath: item.filePath,
               stat: FileStat.DIRECTORY,
@@ -354,6 +359,7 @@ export class FavoritesProvider
               group: item.group,
             })
           }
+
           return resolve({
             filePath: item.filePath,
             stat: FileStat.NEITHER,
