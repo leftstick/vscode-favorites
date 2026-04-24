@@ -30,6 +30,35 @@ suite('FavoritesProvider Tests', () => {
     assert.ok(provider)
   })
 
+  test('should return a file URI for Windows absolute paths in getUriFromPath', () => {
+    const provider = new FavoritesProvider()
+
+    // Windows absolute paths were incorrectly matched by the URI scheme regex (e.g. "C:" looks
+    // like a scheme), causing them to be passed to Uri.parse() instead of Uri.file(), which
+    // produced a mangled URI. They must go through Uri.file().
+    const backslashPath = 'C:\\Users\\test\\.claude'
+    const forwardSlashPath = 'C:/Users/test/.claude'
+
+    const uri1 = (provider as any).getUriFromPath(backslashPath)
+    const uri2 = (provider as any).getUriFromPath(forwardSlashPath)
+
+    assert.strictEqual(uri1.scheme, 'file')
+    assert.strictEqual(uri2.scheme, 'file')
+    assert.ok(uri1.fsPath.toLowerCase().includes('users'))
+    assert.ok(uri2.fsPath.toLowerCase().includes('users'))
+  })
+
+  test('should return a parsed URI for URI strings in getUriFromPath', () => {
+    const provider = new FavoritesProvider()
+
+    // Non-Windows URI strings (e.g. file:///, vscode-remote://) should still go through Uri.parse()
+    const uriString = 'file:///c:/Users/test/.claude'
+    const uri = (provider as any).getUriFromPath(uriString)
+
+    assert.strictEqual(uri.scheme, 'file')
+    assert.ok(uri.fsPath.toLowerCase().includes('users'))
+  })
+
   test('should sort resources by file type when sortOrder is FILETYPE', async () => {
     const provider = new FavoritesProvider()
 
